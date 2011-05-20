@@ -34,9 +34,10 @@ function is_vcs {
 }
 
 VANILLA_PWD="\033[1;37m" # bold white
-SVN_PWD="\033[1;48;5;234;38;5;46m" # bold light green on dark gray
-HG_PWD="\033[1;48;5;234;38;5;51m" # bold light blue on dark gray
+SVN_PWD="\033[1;48;5;234;38;5;51m" # bold light blue on dark gray
+HG_PWD="\033[1;48;5;234;38;5;46m" # bold light green on dark gray
 GIT_PWD="\033[1;48;5;234;38;5;196m" # bold red on dark gray
+GIT_SVN_PWD="\033[1;48;5;234;38;5;163m" # bold purple on dark gray
 
 function get_vcs_pwd_color {
     VCS_PWD=$VANILLA_PWD
@@ -44,6 +45,8 @@ function get_vcs_pwd_color {
     [[ -d .svn ]] && VCS_PWD=$SVN_PWD
     is_vcs hg  && VCS_PWD=$HG_PWD
     is_vcs git && VCS_PWD=$GIT_PWD
+
+    [[ -d .svn ]] && is_vcs git && VCS_PWD=$GIT_SVN_PWD
 
     echo -e $VCS_PWD
 }
