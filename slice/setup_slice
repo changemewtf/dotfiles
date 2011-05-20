@@ -1,0 +1,134 @@
+#!/bin/bash
+# vim: tw=0 sts=4 sw=4 et list
+
+function safe_update_sudoers {
+    if [ -e /etc/sudoers.tmp -o "$(pidof visudo)" ]; then
+      echo "/etc/sudoers busy, try again later"
+      exit 1
+    fi
+
+    cp /etc/sudoers /etc/sudoers.bak
+    cp /etc/sudoers /etc/sudoers.tmp
+
+    chmod 0640 /etc/sudoers.tmp
+    echo "$1" >> /etc/sudoers.tmp
+    chmod 0440 /etc/sudoers.tmp
+
+    mv /etc/sudoers.tmp /etc/sudoers
+}
+
+. slice_constants
+
+# check for files
+for file in $LOAD_PUBKEY $LOAD_REPO $LOAD_DB $LOAD_DOKU $LOAD_WP; do
+    if ! [[ -s $file ]] || ! [[ -r $file ]]; then
+        echo "Required file $file is empty or nonexistant."
+        exit 1
+    fi
+done
+
+for user in $HOSTED_USERS; do
+    if ! [[ -s $PAYLOAD/users/$user.tar.gz ]] || ! [[ -r $PAYLOAD/users/$user.tar.gz ]]; then
+        echo "Required file $file is empty or nonexistant."
+        exit 1
+    fi
+done
+
+# add admin user
+adduser $ADMIN_USERNAME --disabled-password --gecos ""
+safe_update_sudoers "$ADMIN_USERNAME ALL=(ALL) ALL"
+
+# populate ssh dir
+SSH=/home/$ADMIN_USERNAME/.ssh
+mkdir $SSH
+cp $LOAD_PUBKEY $SSH/authorized_keys
+chmod 700 $SSH
+chmod 600 $SSH/authorized_keys
+chown -R $ADMIN_USERNAME:$ADMIN_USERNAME $SSH
+
+# create & load svn repo
+aptitude -q -y install subversion
+svnadmin create $SVN_PATH
+svnadmin load -q $SVN_PATH < $LOAD_REPO
+
+# load homedir
+su $ADMIN_USERNAME -c "cd && rm .bashrc && svn co file://$SVN_PATH/home/branches/$HOME_BRANCH ."
+
+# create & load database
+# disable whiptail password prompt
+echo mysql-server-5.0 mysql-server/root_password password $TMP_PASSWORD | debconf-set-selections
+echo mysql-server-5.0 mysql-server/root_password_again password $TMP_PASSWORD | debconf-set-selections
+aptitude -q -y install mysql-server
+mysql -u root -p$TMP_PASSWORD < $LOAD_DB
+mysql -u root -p$TMP_PASSWORD -e "flush privileges;"
+
+# install webservers, staggered so lighttpd gets port 80
+aptitude -q -y install php5-cgi php5-mysql lighttpd
+aptitude -q -y install apache2 libapache2-svn
+
+# checkout sites
+svn co file://$SVN_PATH/sites $SITES
+chown -R $ADMIN_USERNAME:$ADMIN_USERNAME $SITES
+chgrp -R www-data $SITES/*/log
+chmod g+w $SITES/*/log
+
+# lighty conf
+ln -sf /home/$ADMIN_USERNAME/etc/lighttpd.conf /etc/lighttpd/lighttpd.conf
+/etc/init.d/lighttpd restart
+
+# apache conf
+adduser svn --system --group --no-create-home --disabled-login --gecos ""
+chown -R svn:svn $SVN_PATH
+APACHE=/etc/apache2
+APACHE_ETC=/home/$ADMIN_USERNAME/etc/apache
+rm $APACHE/sites-enabled/default
+ln -sf $APACHE_ETC/apache2.conf $APACHE/apache2.conf
+ln -sf $APACHE_ETC/ports.conf $APACHE/ports.conf
+ln -sf $APACHE_ETC/envvars $APACHE/envvars
+ln -sf $SITES/svn/www/etc/vhost.conf $APACHE/sites-enabled/svn
+ln -sf /home/$ADMIN_USERNAME/etc/svn/authz $SVN_PATH/conf/authz
+ln -sf /home/$ADMIN_USERNAME/etc/svn/svn-auth-file-digest $SVN_PATH/conf/svn-auth-file-digest
+ln -sf $SVN_PATH/conf/svn-auth-file-digest $SVN_PATH/conf/svn-auth-file
+a2enmod auth_digest
+/etc/init.d/apache2 start
+
+# relocate from filesystem to apache repo
+su $ADMIN_USERNAME -c "svn switch --relocate {file://$SVN_PATH,$SVN_WEB}/home/branches/$HOME_BRANCH $HOME"
+su $ADMIN_USERNAME -c "svn switch --relocate {file://$SVN_PATH,$SVN_WEB}/home/trunk $HOME/.common"
+su $ADMIN_USERNAME -c "svn switch --relocate {file://$SVN_PATH,$SVN_WEB}/sites /var/sites"
+
+# apps
+mkdir $APPS
+
+# wiki
+tar -xvzf $LOAD_DOKU -C $APPS
+
+# checkout wiki docs
+WIKIDOCS=/home/$ADMIN_USERNAME/wikidocs
+svn co file://$SVN_PATH/documents/wiki/trunk $WIKIDOCS
+chown -R $ADMIN_USERNAME:www-data $WIKIDOCS
+chmod g+w -R $WIKIDOCS
+
+# wordpress
+tar -xvzf $LOAD_WP -C $APPS
+
+# configure timezone
+echo "America/New_York" > /etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+
+# add hosted users
+for file in $ETC_FILES; do
+    cat $PAYLOAD/$file >> /etc/$file
+done
+
+# extract homedirs
+for user in $HOSTED_USERS; do
+    tar -xvzf $PAYLOAD/users/$user.tar.gz -C /home
+done
+
+# install basic packages
+aptitude -q -y install screen ncurses-term man-db manpages ctags git-core mercurial
+
+# update
+aptitude -q -y update && aptitude -q -y safe-upgrade
+rm -f /etc/motd.tail

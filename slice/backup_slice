@@ -1,0 +1,23 @@
+#!/bin/bash
+
+. slice_constants
+
+cd
+rm -rf $PAYLOAD
+mkdir $PAYLOAD
+mysqldump --all-databases -u root -p > $LOAD_DB
+svnadmin dump -q /var/repos > $LOAD_REPO
+tar -czf $LOAD_DOKU -C /var/apps doku
+tar -czf $LOAD_WP -C /var/apps wordpress
+
+mkdir $PAYLOAD/users
+
+for user in $HOSTED_USERS; do
+    sudo tar -czf $PAYLOAD/users/$user.tar.gz -C /home $user
+done
+
+for file in $ETC_FILES; do
+    sudo egrep "(${HOSTED_USERS// /|})" /etc/$file > $PAYLOAD/$file
+done
+
+cp $HOME/id_rsa.pub $PAYLOAD
