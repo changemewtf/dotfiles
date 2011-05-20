@@ -1,4 +1,4 @@
-# vim: ft=sh
+#!/bin/bash
 
 shopt -s histappend # multiple terminals don't clobber each others' history
 shopt -s checkwinsize # update LINES and COLUMNS
