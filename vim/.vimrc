@@ -39,7 +39,6 @@ set backspace=indent,eol,start
 set showmatch
 
 " Formatting
-set textwidth=80
 set nowrap
 
 " Status line
@@ -381,14 +380,13 @@ endfunction
 function! WordProcessingToggle()
     if !exists('b:wordprocessing') || b:wordprocessing
         let b:wordprocessing = 'true'
-        setlocal lbr ai
-        setlocal tw=80
-        setlocal fo-=cq fo+=tan1
+        setlocal wrap linebreak nolist
+	setlocal textwidth=0
         echo "Word processing mode enabled."
     else
         let b:wordprocessing = 'false'
-        setlocal nolbr noai
-        setlocal fo+=cq fo-=tan1
+        setlocal nowrap nolinebreak list
+        setlocal textwidth=80
         echo "Word processing mode disabled."
     endif
 endfunction

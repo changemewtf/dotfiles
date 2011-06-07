@@ -54,20 +54,24 @@ function get_vcs_pwd_color {
 }
 
 function set_color_prompt {
-    PS1_JOBS='(( $(jobs | wc -l) > 0 )) && echo " ($(jobs | wc -l))"'
-
     GREEN='\033[36m'
+    WHITE='\033[37;49m'
     BRIGHT_WHITE_ON_DFLT_BG='\033[1;37;49m'
     RESET_FORMATTING='\033[0m'
+
+    PS1_JOBS='(( $(jobs | wc -l) > 0 )) && echo " (\j)"'
+    PS1_RVM='(( $(rvm-prompt | wc -l) > 0 )) && echo -e "(\['$WHITE'\]$(rvm-prompt p)\['$BRIGHT_WHITE_ON_DFLT_BG'\]$(rvm-prompt g)\['$RESET_FORMATTING'\]) "'
 
     # \[ \] are required to tell bash that the escapes do not move the cursor
 
     PS1="\[$GREEN\]\u@\h"
     PS1=$PS1' '
-    PS1=$PS1'\[$(eval get_vcs_pwd_color)\]\w'
+    PS1=$PS1'\[$(get_vcs_pwd_color)\]\w'
     PS1=$PS1"\[$BRIGHT_WHITE_ON_DFLT_BG\]"
-    PS1=$PS1'$(eval $PS1_JOBS)'
+    PS1=$PS1'$('$PS1_JOBS')'
     PS1=$PS1": \[$RESET_FORMATTING\]"
+
+    [[ -s $HOME/.rvm/scripts/rvm ]] && PS1='$('$PS1_RVM')'$PS1
 }
 
 case "$TERM" in
