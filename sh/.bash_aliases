@@ -23,6 +23,7 @@ alias :q='logout'
 alias :e='vim'
 alias ,e='vim $HOME/.vimrc'
 alias which='type -a'
+alias wget='wget --content-disposition'
 function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } # to be piped after a diff
 function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
 function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
