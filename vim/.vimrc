@@ -4,17 +4,22 @@
 
 " Basic Settings {{{
 
-set background=dark
-color hhdgray
-set modeline
+call pathogen#infect()
+
+set modelines=2
+
+" For clever completion with the :find command
+set path+=**
+
+" Always use bash syntax for sh filetype
+let g:is_bash=1
 
 " Activate auto filetype detection
 filetype plugin indent on
-syntax enable
 
 " Search
 set ignorecase smartcase
-set grepprg=vimsgrep\ $*
+set grepprg=grep\ -IrsnH
 
 " Window display
 set showcmd ruler laststatus=2
@@ -23,6 +28,7 @@ set showcmd ruler laststatus=2
 set splitright
 
 " Buffers
+set history=500
 set hidden
 if exists("&undofile")
     set undofile
@@ -32,27 +38,71 @@ endif
 set dictionary+=/usr/share/dict/words thesaurus+=$HOME/.thesaurus
 
 " Text display
-set listchars=trail:.,tab:>-,extends:>,precedes:<
+set listchars=trail:.,tab:>-,extends:>,precedes:<,nbsp:¬
+set list
 
 " Typing behavior
 set backspace=indent,eol,start
 set showmatch
+set wildmode=full
+set wildmenu
+set complete-=i
 
 " Formatting
 set nowrap
+set tabstop=4 shiftwidth=4 softtabstop=4
 
 " Status line
 set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=%-14.(%l,%c%V%)\ %P/%L
 
-hi User1 term=bold cterm=bold ctermfg=white ctermbg=red
+" Make the modification indicator [+] white on red background
+au ColorScheme * hi User1 gui=bold term=bold cterm=bold guifg=white guibg=red ctermfg=white ctermbg=red
 
-autocmd BufNewFile,BufRead /*apache* setfiletype apache
-autocmd BufNewFile,BufRead /*lighttpd*.conf setfiletype lighty
+" Tweak the color of the fold display column
+au ColorScheme * hi FoldColumn cterm=bold ctermbg=233 ctermfg=146
 
-autocmd FileType python,pyfusion let b:python_highlight_all=1
-autocmd FileType python,pyfusion,ruby,html setl list fdm=indent foldenable sts=4 sw=4 et
+set background=dark
+color hhdgray
 
-autocmd FileType rst setl sw=3 sts=3
+syntax enable
+
+if has('mac')
+    autocmd BufEnter *.md exe 'noremap <F5> :!open -a "Google Chrome" %:p<CR>'
+    autocmd BufEnter *.md exe 'noremap <F6> :!open -a "Mou" %:p<CR>'
+endif
+
+au! BufNewFile,BufRead /*apache* set ft=apache
+au! BufNewFile,BufRead /*lighttpd*.conf set ft=lighty
+au! BufNewFile,BufRead *.ejs set ft=jst.html
+au! BufNewFile,BufRead *.ce set ft=python
+au! BufNewFile,BufRead */diary/*.txt set ft=diary
+
+" create two empty side buffers to make the diary text width more readable,
+" without actually setting a hard textwidth which requires inserting CR's
+au! VimEnter */diary/*.txt vsplit | vsplit | enew | vertical resize 50 | wincmd t | enew | vertical resize 50 | wincmd l
+
+au! BufNewFile,BufRead $HOME/src/flowork/Flowork/floworktg/floworktg/public/*.js setl sw=3 sts=3 fdm=indent et
+au! BufNewFile,BufRead $HOME/src/flowork/* set path+=floworktg/floworktg/public includeexpr=substitute(v:fname,'\/*','','')
+
+au! BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
+
+au! BufWritePost * call UpdateTaskDisplay()
+
+au! FileType c,h setl foldmethod=syntax noexpandtab nolist
+
+au! FileType cpp setl foldmethod=syntax expandtab
+au! FileType hpp,vim,sh setl expandtab
+
+au! FileType html,htmldjango,css,javascript setl foldmethod=indent foldenable expandtab
+
+au! FileType python let b:python_highlight_all=1
+au! FileType python,ruby setl foldmethod=indent foldenable expandtab
+
+au! FileType rst setl shiftwidth=3 softtabstop=3
+
+au! FileType sass,scss setl iskeyword+=- softtabstop=2 shiftwidth=2 expandtab
+
+au! FileType diary setl wrap linebreak nolist
 
 " }}}
 
@@ -61,14 +111,17 @@ autocmd FileType rst setl sw=3 sts=3
 " TODO Just use $VIMRUNTIME for this
 if has('win32')
     " Windows filesystem
-    set directory=C:\VimBackups
-    set backupdir=C:\VimBackups
+    set directory=$HOME\VimBackups\swaps,$HOME\VimBackups,C:\VimBackups,.
+    set backupdir=$HOME\VimBackups\backups,$HOME\VimBackups,C:\VimBackups,.
     if exists("&undodir")
-        set undodir=C:\VimBackups
+        set undodir=$HOME\VimBackups\undofiles,$HOME\VimBackups,C:\VimBackups,.
     endif
     " TODO who cares about pre-vim 7...
     if($MYVIMRC == "")  " Pre-Vim 7
         let $MYVIMRC = $VIM."\_vimrc"
+    endif
+    if has("gui_running")
+      set guifont=Inconsolata:h12:cANSI
     endif
 else
     " Linux filesystem
@@ -88,6 +141,16 @@ endif
 
 " Key Mappings {{{
 
+" Easy quickfix navigation
+nnoremap <C-n> :cn<CR>
+nnoremap <C-p> :cp<CR>
+
+" Easy header/source swap
+nnoremap [f :call SourceHeaderSwap()<CR>
+
+" Usual ^^ behavior re-adds to the buffer list; this leaves it hidden
+nnoremap <C-^> :b#<CR>
+
 " Yank all top-level Python methods into register m
 nnoremap ,m let @m="" \| g/def /exe "normal 0f l\"Myt(" \| let @m.=","
 
@@ -98,10 +161,16 @@ nnoremap gV `[V`]
 inoremap <C-u> <ESC>:w<CR>
 
 " Create a new HTML document.
-nnoremap ,html :set ft=html<CR>i<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><CR><html lang="en"><CR><head><CR><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><CR><title></title><CR><link rel="stylesheet" type="text/css" href="style.css"><CR><script type="text/javascript" src="script.js"></script><CR></head><CR><body><CR></body><CR></html><ESC>?title<CR>2hi
+nnoremap ,html :set ft=html<CR>i<!doctype html><CR><html><CR><head><CR><title></title><CR><link rel="stylesheet" type="text/css" href="style.css"><CR><script type="text/javascript" src="script.js"></script><CR></head><CR><body><CR></body><CR></html><ESC>?title<CR>2hi
 
 " Bind for easy pasting
 set pastetoggle=<F12>
+
+" De-fuckify whitespace
+nnoremap <F4> :retab<CR>:%s/\s\+$//e<CR><C-o>
+
+" De-fuckify syntax hilighting
+nnoremap <F3> :syn sync fromstart<CR>
 
 " Editing vimrc
 nnoremap ,v :source $MYVIMRC<CR>
@@ -136,6 +205,9 @@ nnoremap <silent> ,k :if &diff \| exec 'normal [czz' \| endif<CR>
 nnoremap <silent> ,p :if &diff \| exec 'normal dp' \| endif<CR>
 nnoremap <silent> ,o :if &diff \| exec 'normal do' \| endif<CR>
 nnoremap <silent> ZD :if &diff \| exec ':qall' \| endif<CR>
+
+" Clean up Sass source
+vnoremap ,S :call CleanupSassSource()<CR>
 
 " Movement between tabs OR buffers
 nnoremap <silent> L :call MyNext()<CR>
@@ -177,19 +249,31 @@ nnoremap ,! q:k0ea!<ESC>
 " Swap order of Python function arguments
 nnoremap <silent> ,- :%s/\(self\.\)\?<C-R><C-W>(\(self, \)\?\([a-zA-Z]\+\), \?\([a-zA-Z]\+\))/\1<C-R><C-W>(\2\4, \3)/g<CR>
 
-" Quick file documentation stub in Python
-nnoremap <silent> ,t ggO"""Author: Max Cantor <mcantor@ag.com>Date: =strftime("%B %e, %Y <%m/%d/%Y>")"""__id__ = "$Id"ggoGOAL: 
-
 " RST headers
 nnoremap <silent> <C-_> :let chr=nr2char(getchar()) \| call RSTHeader(chr)<CR>
 inoremap <silent> <C-_>1 <ESC>:call RSTHeader("=")<CR>o
 inoremap <silent> <C-_>2 <ESC>:call RSTHeader("-")<CR>o
 inoremap <silent> <C-_>3 <ESC>:call RSTHeader("^")<CR>o
 
+" Swap tab/space mode
+nnoremap ,<TAB> :set et! list!<CR>
+
 " }}}
 
 " Custom Functions {{{
 
+" CleanupSassSource() {{{
+
+function! CleanupSassSource()
+  " All comma delimiters should have a following space
+  silent '<,'>s/,\([^\s]\)/, \1/ge
+  " All comma delimiters should have 1 and only 1 space
+  silent '<,'>s/,\s\{2,\}/, /ge
+endfunction
+
+" }}}
+
+" Miscellaneous {{{
 function! RSTHeader(chr)
     " inserts an RST header without clobbering any registers
     put =substitute(getline('.'), '.', a:chr, 'g')
@@ -202,6 +286,25 @@ endfunction
 function! LineLength(row)
     return len(getline(a:row))
 endfunction
+" }}}
+
+" Source/Header Swap {{{
+function! SourceHeaderSwap()
+    if expand('%:h') == 'content/ui'
+        execute ":edit mods/base/ui/".expand('%:t:r').".py"
+    elseif expand('%:h') == 'mods/base/ui'
+        execute ":edit content/ui/".expand('%:t:r').".html"
+    elseif expand('%:e') == 'h'
+        if filereadable(expand('%:r').".c")
+            execute ":edit ".expand('%:r').".c"
+        else
+            execute ":edit ".expand('%:r').".cpp"
+        endif
+    else
+        edit %<.h
+    endif
+endfunction
+" }}}
 
 " Syntax Info {{{
 function! GetSynInfo()
@@ -232,7 +335,7 @@ function! GetSynInfoString(syndict)
 endfunction
 
 function! GetHereSynId(trans)
-    return synID(line("."), col("."), a:trans) 
+    return synID(line("."), col("."), a:trans)
 endfunction
 
 function! GetSynDict(synid)
@@ -381,7 +484,7 @@ function! WordProcessingToggle()
     if !exists('b:wordprocessing') || b:wordprocessing
         let b:wordprocessing = 'true'
         setlocal wrap linebreak nolist
-	setlocal textwidth=0
+        setlocal textwidth=0
         echo "Word processing mode enabled."
     else
         let b:wordprocessing = 'false'
@@ -409,12 +512,88 @@ function! NotepadLineToggle()
     endif
 endfunction
 " }}}
+
+" Tasksheets {{{
+
+function! UpdateTaskRemain(line_no, remain, hours_worked)
+    let l:check_line = a:line_no
+    let l:last_line = line('$')
+    let l:already_has_summary = 0
+
+    " echo "update " . a:line_no . " remaining: " . string(a:remain) . " with worked: " . string(a:hours_worked)
+
+    while l:check_line <= l:last_line
+        if getline(l:check_line + 1) == ""
+            " last line before empty (end of task clause)
+            break
+        endif
+        let l:check_line += 1
+    endwhile
+
+    let l:line = getline(l:check_line)
+
+    if l:line =~ "^REMAIN" || l:line =~ "^TOTAL"
+        let l:already_has_summary = 1
+    endif
+
+    let l:total = "TOTAL: " . string(a:hours_worked)
+
+    if a:remain > 0.0
+        let l:new_summary = "REMAIN: " . string(a:remain) . " (" . l:total . ")"
+    else
+        let l:new_summary = l:total
+    endif
+
+    if l:already_has_summary
+        call setline(l:check_line, l:new_summary)
+    else
+        call append(l:check_line, l:new_summary)
+    endif
+endfunction
+
+function! UpdateTaskDisplay()
+    if &ft != 'tasksheet' | return | endif
+    let l:default_project = substitute(system("python custom_calc_timesheet.py " . expand("%") . " default_project"), '\n', '', '')
+    let l:tasks = split(system("python custom_calc_timesheet.py " . expand("%") . " exhaust"), '\n')
+
+    exe "normal mz"
+
+    syn clear taskBudgetExceeded
+    syn clear taskBudgetExhausted
+
+    for l:task in l:tasks
+        let [l:task_id, l:project, l:remain, l:hours_worked] = split(l:task, " ")
+
+        if str2float(l:remain) < 0.0
+            exe "syn match taskBudgetExceeded /" . l:task_id . "/ contained"
+        elseif str2float(l:remain) == 0.0
+            exe "syn match taskBudgetExhausted /" . l:task_id . "/ contained"
+        endif
+
+        if l:project == l:default_project
+            let l:default_project_pattern = "\\[" . l:project . "\\]"
+            let l:anything_else_pattern = "[^\\[]"
+            let l:project_pattern = "\\(" . l:default_project_pattern . "\\|" . l:anything_else_pattern . "\\)"
+        else
+            let l:project_pattern = "\\[" . l:project . "\\]"
+        endif
+
+        exe "g/^" . l:task_id . " " . l:project_pattern . "/call UpdateTaskRemain(line('.'), " . l:remain . ", " . l:hours_worked . ")"
+    endfor
+
+    exe "normal `z"
+endfunction
+
+" do this so it's called after everything is cleared by `syntax enable` when
+" re-sourcing .vimrc
+call UpdateTaskDisplay()
+
+" }}}
+
 " }}}
 
 " Local Settings {{{
-
 if filereadable($HOME."/.local/vim/.vimrc")
     source $HOME/.local/vim/.vimrc
 endif
-
 " }}}

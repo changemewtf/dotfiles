@@ -1,0 +1,13 @@
+#!/bin/bash
+
+URL='http://www.ip-adress.com/ip_tracer/?QRY='
+TMPDIR=$HOME/tmp
+BUFFER=$TMPDIR/out
+
+rm -rf $TMPDIR
+mkdir $TMPDIR
+
+lynx -dump $URL > $BUFFER
+
+gsed -nr s/'^.*My IP address city: (.+)$/\1/p' <$BUFFER
+gsed -nr s/'^.*My IP address state: (.+)$/\1/p' <$BUFFER

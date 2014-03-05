@@ -1,5 +1,0 @@
-stuff ^[
-stuff ":w\015"
-select run
-stuff ^[
-stuff k\015

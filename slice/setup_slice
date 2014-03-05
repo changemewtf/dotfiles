@@ -63,6 +63,9 @@ mysql -u root -p$TMP_PASSWORD < $LOAD_DB
 mysql -u root -p$TMP_PASSWORD -e "flush privileges;"
 
 # install webservers, staggered so lighttpd gets port 80
+chown -R mcantor:mcantor $SITES
+chown mcantor:www-data $SITES/*/log
+chmod g+w $SITES/*/log
 aptitude -q -y install php5-cgi php5-mysql lighttpd
 aptitude -q -y install apache2 libapache2-svn
 

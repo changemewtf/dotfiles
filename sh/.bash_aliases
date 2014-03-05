@@ -24,7 +24,12 @@ alias :e='vim'
 alias ,e='vim $HOME/.vimrc'
 alias which='type -a'
 alias wget='wget --content-disposition'
+alias loc="find . -type f -iname \"*.rb\" -exec cat {} \; | sed '/^\s*#/d;/^\s*$/d' | wc -l"
 function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } # to be piped after a diff
 function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
 function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
 function :he { vim -c ":he $1" -c :only; }
+
+if [ `uname -s` = "Darwin" ]; then
+	alias msyql_stop='sudo /usr/local/mysql/support-files/mysql.server stop'
+fi

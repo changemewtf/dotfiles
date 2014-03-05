@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Try to use GNU ln if we're on OS X
+if hash gln 2>/dev/null; then
+  LN='gln'
+else
+  LN='ln'
+fi
+
+cd $HOME
+
+ls -A .common-public/sh | awk '{ print ".common-public/sh/"$0 }' | xargs $LN -sf -t .
+ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
+
+$LN -sf -t . .common-public/{vim/.vim,vim/.vimrc}
+$LN -sf -t . .common-private/irssi/.irssi
+
+mkdir -p .ssh
+chmod -R a=,u=rwX .ssh
+$LN -sf -t .ssh ../.common-private/ssh/config
