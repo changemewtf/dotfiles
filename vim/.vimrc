@@ -104,6 +104,8 @@ au! FileType sass,scss setl iskeyword+=- softtabstop=2 shiftwidth=2 expandtab
 
 au! FileType diary setl wrap linebreak nolist
 
+au! FileType gitconfig setl noexpandtab nolist
+
 " }}}
 
 " Backups & .vimrc Editing {{{
