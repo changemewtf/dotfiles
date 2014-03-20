@@ -16,6 +16,7 @@ case "$TERM" in
 screen*|putty*|xterm*)
     source $HOME/.bash_prompt_colors
     source $HOME/.bash_prompt_vcs_colors
+    source $HOME/.bash_git_prompt
 
     PS1='\[$USER_HOST_COLOR\]\u@\h '
     PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
