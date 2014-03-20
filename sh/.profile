@@ -1,4 +1,4 @@
-export PATH=/usr/local/bin:$HOME/.common-public/bin:$HOME/.common-private/bin:$PATH
+export PATH=/usr/local/bin:$HOME/.common-public/bin:$HOME/.common-private/bin:$HOME/.local/bin:$PATH
 export EDITOR='vim'
 export PATCH_DIR=$HOME/.patches
 export PATCH_BACKUP_DIR=$HOME/.pbackup
