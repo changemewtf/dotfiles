@@ -1,5 +1,14 @@
 #!/bin/bash
 
+shopt -s histappend # multiple terminals don't clobber each others' history
+shopt -s checkwinsize # update LINES and COLUMNS
+
+if [[ $TERM != *-256color ]]; then
+    POTENTIAL_TERM=${TERM}-256color
+
+    toe -a | awk '{print $1}' | grep -Fxq $POTENTIAL_TERM && export TERM=$POTENTIAL_TERM
+fi
+
 # Terminal Foregrounds
 BLACK=$(tput setaf 0)
 RED=$(tput setaf 1)
@@ -37,15 +46,6 @@ GIT_PWD="${BG_DARK_GRAY}${BOLD}${CRIMSON}"
 GIT_BRANCH_COLOR=$GREEN
 GIT_DETACHED_COLOR=$YELLOW
 GIT_ACTIVITY_COLOR=$(tput setab 17)$(tput setaf 141)
-
-shopt -s histappend # multiple terminals don't clobber each others' history
-shopt -s checkwinsize # update LINES and COLUMNS
-
-if [[ $TERM != *-256color ]]; then
-    POTENTIAL_TERM=${TERM}-256color
-
-    toe -a | awk '{print $1}' | grep -Fxq $POTENTIAL_TERM && export TERM=$POTENTIAL_TERM
-fi
 
 # don't presume remote boxes will have 256-color terminfo files
 [[ $TERM == *-256color ]] && alias ssh='TERM=${TERM%-256color} ssh'
