@@ -1,44 +1,44 @@
 [alias]
-    st = status
-    ci = commit
-    co = checkout
-    br = branch
-    d = diff
-    lolmin = log --graph --oneline --decorate
-    lol =    log --graph --decorate \
-        --format=format:'%C(auto)%h%d\n%s - %C(blue)%an%C(reset), %ar\n'
+	st = status
+	ci = commit
+	co = checkout
+	br = branch
+	d = diff
+	lolmin = log --graph --oneline --decorate
+	lol =	 log --graph --decorate \
+		--format=format:'%C(auto)%h%d\n%s - %C(blue)%an%C(reset), %ar\n'
 
-    files-uncommitted = diff --no-commit-id --name-only
-    files-staged = diff --no-commit-id --name-only --cached
+	files-uncommitted = diff --no-commit-id --name-only
+	files-staged = diff --no-commit-id --name-only --cached
 
-    # gotta use diff-tree when targeting a prior revision, because otherwise
-    # diff compares to the current tree, meaning you'll see all changes
-    # between $REV and HEAD
-    files-in-rev = diff-tree --no-commit-id --name-only -r
+	# gotta use diff-tree when targeting a prior revision, because otherwise
+	# diff compares to the current tree, meaning you'll see all changes
+	# between $REV and HEAD
+	files-in-rev = diff-tree --no-commit-id --name-only -r
 
-    undelete = !git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
+	undelete = !git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
 
-    ls-local-refs = for-each-ref --format='%(refname:short)' refs/heads/*
-    ls-tracking-branches = "!git ls-local-refs | \
-        while read ref; do \
-            if upstream=$(git config --get branch.$ref.remote); then\
-                tracked=$(git config --get branch.$ref.merge); \
-                echo \"$ref -> $upstream/${tracked##*/}\"; \
-            fi; \
-        done"
+	ls-local-refs = for-each-ref --format='%(refname:short)' refs/heads/*
+	ls-tracking-branches = "!git ls-local-refs | \
+		while read ref; do \
+			if upstream=$(git config --get branch.$ref.remote); then\
+				tracked=$(git config --get branch.$ref.merge); \
+				echo \"$ref -> $upstream/${tracked##*/}\"; \
+			fi; \
+		done"
 
 [color]
-    ui = true
+	ui = true
 
 [color "status"]
-    changed = magenta
+	changed = magenta
 
 [user]
-    name = Max Cantor
-    email = max@maxcantor.net
+	name = Max Cantor
+	email = max@maxcantor.net
 
 [push]
-    default = simple
+	default = simple
 
 [merge]
-    tool = vimdiff
+	tool = vimdiff
