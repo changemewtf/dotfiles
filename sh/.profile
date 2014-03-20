@@ -5,9 +5,9 @@ export PATCH_DIR=$HOME/.patches
 export PATCH_BACKUP_DIR=$HOME/.pbackup
 export HISTCONTROL=ignorespace:erasedups
 export SRC=$HOME/code
-export STUDENTS="$HOME/src/Students"
-export SFORK="$HOME/src/Students-Fork"
-export TENDER="$HOME/src/Instructors"
+export STUDENTS="$HOME/src/GA/Students"
+export SFORK="$HOME/src/GA/Students-Fork"
+export TENDER="$HOME/src/GA/Instructors"
 
 function day_of_week_number {
     day_of_week=$(date "+%A")
