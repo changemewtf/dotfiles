@@ -235,7 +235,7 @@ screen*|putty*|xterm*)
     PROMPT_COMMAND=$PROMPT_COMMAND' && echo'
 
     if $(type -P dircolors &>/dev/null); then
-        eval $(dircolors -head_name)
+        eval $(dircolors -b)
         alias ls='ls --color=auto'
     else
         # On OS X, get pleasant light blue back for directories
