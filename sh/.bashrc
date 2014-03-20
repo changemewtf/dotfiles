@@ -1,5 +1,43 @@
 #!/bin/bash
 
+# Terminal Foregrounds
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+RESET=$(tput sgr0)
+
+# Formatting
+BOLD=$(tput bold)
+
+# 256-color Foregrounds
+LIGHT_BLUE=$(tput setaf 51)
+LIGHT_GREEN=$(tput setaf 46)
+CRIMSON=$(tput setaf 196)
+BRIGHT_WHITE='\033[1;37m'
+
+# 256-color Backgrounds
+BG_DARK_GRAY=$(tput setab 234)
+
+# Basic Prompt
+USER_HOST_COLOR="$CYAN"
+JOBS_COLOR="$BRIGHT_WHITE"
+
+# Directory
+VANILLA_PWD="$WHITE"
+SVN_PWD="${BG_DARK_GRAY}${BOLD}${LIGHT_BLUE}"
+HG_PWD="${BG_DARK_GRAY}${BOLD}${LIGHT_GREEN}"
+GIT_PWD="${BG_DARK_GRAY}${BOLD}${CRIMSON}"
+
+# git
+GIT_BRANCH_COLOR=$GREEN
+GIT_DETACHED_COLOR=$YELLOW
+GIT_ACTIVITY_COLOR=$(tput setab 17)$(tput setaf 141)
+
 shopt -s histappend # multiple terminals don't clobber each others' history
 shopt -s checkwinsize # update LINES and COLUMNS
 
@@ -27,6 +65,8 @@ function should_mask_vcs {
     return 1
 }
 
+# use a mask so we can communicate multiple VCS control in a single dir
+# in case we're dealing with fucked repos that have .git and .svn
 svn_mask=$((1 << 0))
 hg_mask=$((1 << 1))
 git_mask=$((1 << 2))
@@ -45,69 +85,157 @@ function is_vcs {
     return 1
 }
 
-VANILLA_PWD="\033[1;37m" # bold white
-SVN_PWD="\033[1;48;5;234;38;5;51m" # bold light blue on dark gray
-HG_PWD="\033[1;48;5;234;38;5;46m" # bold light green on dark gray
-GIT_PWD="\033[1;48;5;234;38;5;196m" # bold red on dark gray
-GIT_SVN_PWD="\033[1;48;5;234;38;5;163m" # bold purple on dark gray
-
 function get_vcs_pwd_color {
     VCS_PWD=$VANILLA_PWD
-    which_vcs=$1
 
     is_vcs $svn_mask && VCS_PWD=$SVN_PWD
-    is_vcs $hg_mask  && VCS_PWD=$HG_PWD
+    is_vcs $hg_mask && VCS_PWD=$HG_PWD
     is_vcs $git_mask && VCS_PWD=$GIT_PWD
-    is_vcs $git_mask && is_vcs $svn_mask && VCS_PWD=$GIT_SVN_PWD
 
     echo -e $VCS_PWD
 }
 
-function parse_git_branch {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+function prompt_git_activity {
+    g="$1"
+
+    # shamelessly gank from official git repo's __git_ps1
+
+    if [ -d "$g/rebase-merge" ]; then
+        #read head_name 2>/dev/null <"$g/rebase-merge/head-name"
+        read step 2>/dev/null <"$g/rebase-merge/msgnum"
+        read total 2>/dev/null <"$g/rebase-merge/end"
+        if [ -f "$g/rebase-merge/interactive" ]; then
+            act_message="REBASE-i"
+        else
+            act_message="REBASE-m"
+        fi
+    else
+        if [ -d "$g/rebase-apply" ]; then
+            read step 2>/dev/null <"$g/rebase-apply/next"
+            read total 2>/dev/null <"$g/rebase-apply/last"
+            if [ -f "$g/rebase-apply/rebasing" ]; then
+                #read head_name 2>/dev/null <"$g/rebase-apply/head-name"
+                act_message="REBASING"
+            elif [ -f "$g/rebase-apply/applying" ]; then
+                act_message="AM"
+            else
+                act_message="AM/REBASE"
+            fi
+        elif [ -f "$g/MERGE_HEAD" ]; then
+            act_message="MERGING"
+        elif [ -f "$g/CHERRY_PICK_HEAD" ]; then
+            act_message="CHERRY-PICKING"
+        elif [ -f "$g/REVERT_HEAD" ]; then
+            act_message="REVERTING"
+        elif [ -f "$g/BISECT_LOG" ]; then
+            act_message="BISECTING"
+        fi
+    fi
+
+    if [ -n "$step" ] && [ -n "$total" ]; then
+        act_message="$act_message $step/$total"
+    fi
+
+    [ -n "$act_message" ] && echo -ne "\001${GIT_ACTIVITY_COLOR}\002$act_message\001${RESET}\002"
 }
 
-CYAN='\033[36m'
-WHITE='\033[37;49m'
-GREEN='\033[38;5;40m'
-BRIGHT_WHITE_ON_DFLT_BG='\033[1;37;49m'
-RESET_FORMATTING='\033[0m'
+function prompt_git_branch {
+    g="$1"
+
+    read head <"$g/HEAD"
+    branch=${head#ref: }
+
+    if [ "$head" = "$branch" ]; then
+        # detached
+        branch=$(git describe --contains --all HEAD)
+        detached=$(git rev-parse --short HEAD)
+    else
+        branch=${branch##refs/heads/}
+    fi
+
+    echo -ne "\001${GIT_BRANCH_COLOR}\0020${branch}\001${RESET}\002"
+    [ -n "$detached" ] && echo -ne "|\001${GIT_DETACHED_COLOR}\0020${detached}\001${RESET}\002"
+}
+
+function prompt_git_changes {
+    mode='symbols' # count, symbols
+
+    num_staged=$(git diff --cached --numstat | wc -l | tr -d ' ')
+    num_unstaged=$(git diff --numstat | wc -l | tr -d ' ')
+    num_untracked=$(git ls-files --others --exclude-standard | wc -l | tr -d ' ')
+
+    STAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.added green)
+    UNSTAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.changed red)
+    UNTRACKED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.untracked red)
+
+    case "$mode" in
+        count)
+            staged=$num_staged
+            unstaged=$num_unstaged
+            untracked=$num_untracked
+            ;;
+        symbols)
+            staged="+"
+            unstaged="!"
+            untracked="?"
+            ;;
+    esac
+
+    # turns out there IS a way to escape colors from within a function, and it's
+    # using \001 and \002. however, trying to output numbers directly after \002
+    # causes the first digit of the number to be consumed, so there is a 0 after
+    # each \002 before the variable in each line of output below. I have no idea
+    # why it works, but it works :-(
+
+    delimiter='|'
+    count=0
+
+    [ "$num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\001${STAGED_COLOR}\0020${staged}\001${RESET}\002"
+    [ "$num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\001${UNSTAGED_COLOR}\0020${unstaged}\001${RESET}\002"
+    [ "$num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\001${UNTRACKED_COLOR}\0020${untracked}\001${RESET}\002"
+}
+
+function prompt_git {
+    # ask git for the git directory since we might be in a subdir
+    g=$(git rev-parse --git-dir)
+
+    branch=$(prompt_git_branch "$g")
+    changes=$(prompt_git_changes)
+    activity=$(prompt_git_activity "$g")
+
+    echo -ne "("
+    echo -ne "$branch"
+    [ -n "$activity" ] && echo -ne "|$activity"
+    echo -ne ")"
+    [ -n "$changes" ] && echo -ne " [$changes]"
+}
 
 function set_color_prompt {
-    # since bash decodes escapes including \[ and \] BEFORE running command
-    # substitution, we can't call any functions that conditionally output
-    # colors, because there would be no way for them to escape the color
-    # commands correctly. these variables are basically functions that would be
-    # called normally if bash decoded escapes AFTER doing command substitution,
-    # but instead they are 'inlined' directly into the PS1 variable.
-
-    PS1_JOBS='(( $(jobs | wc -l) > 0 )) && echo " (\j)"'
-    PS1_RVM='(( $(rvm-prompt | wc -l) > 0 )) && echo -e "(\['$WHITE'\]$(rvm-prompt p)\['$BRIGHT_WHITE_ON_DFLT_BG'\]$(rvm-prompt g)\['$RESET_FORMATTING'\]) "'
-    PS1_GIT='$(is_vcs $git_mask) && echo -e " (\['$GREEN'\]$(parse_git_branch)\['$RESET_FORMATTING'\])"'
-
-    PS1="\[$CYAN\]\u@\h"
-    PS1=$PS1' '
-    PS1=$PS1'\[$(get_vcs_pwd_color)\]\w'
-    PS1=$PS1"\[$RESET_FORMATTING\]"
-    PS1=$PS1'$('$PS1_GIT')'
-    PS1=$PS1"\[$BRIGHT_WHITE_ON_DFLT_BG\]"
-    PS1=$PS1'$('$PS1_JOBS')'
-    PS1=$PS1": \[$RESET_FORMATTING\]"
-
-    [[ -s $HOME/.rvm/scripts/rvm ]] && PS1='$('$PS1_RVM')'$PS1
+    PS1='\[$USER_HOST_COLOR\]\u@\h '
+    PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
+    PS1=$PS1'$( $(is_vcs $git_mask) && echo -ne " $(prompt_git)" )'
+    PS1=$PS1'$( (( $(jobs | wc -l) > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
+    PS1=$PS1': '
 }
 
 case "$TERM" in
 screen*|putty*|xterm*)
+    # define color prompt command
     set_color_prompt
+
     # set window title
     PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
+
     # detect vcs for prompt coloring
     PROMPT_COMMAND=$PROMPT_COMMAND' && set_vcs_mask'
 
-    type -P dircolors &>/dev/null
-    if [ "$?" -eq "0" ] ; then
-        eval $(dircolors -b)
+    # one newline before printing so our output has some breathing room
+    PROMPT_COMMAND=$PROMPT_COMMAND' && echo'
+
+    if $(type -P dircolors &>/dev/null); then
+        eval $(dircolors -head_name)
         alias ls='ls --color=auto'
     else
         # On OS X, get pleasant light blue back for directories
