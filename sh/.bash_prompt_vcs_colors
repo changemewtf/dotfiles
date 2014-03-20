@@ -1,0 +1,48 @@
+#!/bin/bash
+
+function should_mask_vcs {
+    currdir=${PWD}
+    vcs=$1
+
+    while [[ -e "$currdir" ]]; do
+        if [[ -d "$currdir/.$vcs" ]]; then
+            return 0
+        else
+            currdir=${currdir%/*} # now check parent directory
+        fi
+    done
+
+    return 1
+}
+
+# use a mask so we can communicate multiple VCS control in a single dir
+# in case we're dealing with fucked repos that have .git and .svn
+svn_mask=$((1 << 0))
+hg_mask=$((1 << 1))
+git_mask=$((1 << 2))
+
+VCS_MASK=0
+
+function set_vcs_mask {
+    VCS_MASK=0
+    [[ -d .svn ]] && let "VCS_MASK |= $svn_mask"
+    should_mask_vcs hg && let "VCS_MASK |= $hg_mask"
+    should_mask_vcs git && let "VCS_MASK |= $git_mask"
+}
+
+function is_vcs {
+    [[ $(($VCS_MASK & $1)) -ne 0 ]] && return 0
+    return 1
+}
+
+function get_vcs_pwd_color {
+    VCS_PWD=$VANILLA_PWD
+
+    is_vcs $svn_mask && VCS_PWD=$SVN_PWD
+    is_vcs $hg_mask && VCS_PWD=$HG_PWD
+    is_vcs $git_mask && VCS_PWD=$GIT_PWD
+
+    echo -e $VCS_PWD
+}
+
+

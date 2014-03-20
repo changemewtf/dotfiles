@@ -1,0 +1,120 @@
+#!/bin/bash
+
+function prompt_git_activity {
+    g="$1"
+
+    # shamelessly gank from official git repo's __git_ps1
+
+    if [ -d "$g/rebase-merge" ]; then
+        #read head_name 2>/dev/null <"$g/rebase-merge/head-name"
+        read step 2>/dev/null <"$g/rebase-merge/msgnum"
+        read total 2>/dev/null <"$g/rebase-merge/end"
+        if [ -f "$g/rebase-merge/interactive" ]; then
+            act_message="REBASE-i"
+        else
+            act_message="REBASE-m"
+        fi
+    else
+        if [ -d "$g/rebase-apply" ]; then
+            read step 2>/dev/null <"$g/rebase-apply/next"
+            read total 2>/dev/null <"$g/rebase-apply/last"
+            if [ -f "$g/rebase-apply/rebasing" ]; then
+                #read head_name 2>/dev/null <"$g/rebase-apply/head-name"
+                act_message="REBASING"
+            elif [ -f "$g/rebase-apply/applying" ]; then
+                act_message="AM"
+            else
+                act_message="AM/REBASE"
+            fi
+        elif [ -f "$g/MERGE_HEAD" ]; then
+            act_message="MERGING"
+        elif [ -f "$g/CHERRY_PICK_HEAD" ]; then
+            act_message="CHERRY-PICKING"
+        elif [ -f "$g/REVERT_HEAD" ]; then
+            act_message="REVERTING"
+        elif [ -f "$g/BISECT_LOG" ]; then
+            act_message="BISECTING"
+        fi
+    fi
+
+    if [ -n "$step" ] && [ -n "$total" ]; then
+        act_message="$act_message $step/$total"
+    fi
+
+    [ -n "$act_message" ] && echo -ne "\x01${GIT_ACTIVITY_COLOR}\x02$act_message\x01${RESET}\x02"
+}
+
+function prompt_git_branch {
+    g="$1"
+
+    read head <"$g/HEAD"
+    branch=${head#ref: }
+
+    if [ "$head" = "$branch" ]; then
+        # detached
+        branch=$(git describe --contains --all HEAD)
+        detached=$(git rev-parse --short HEAD)
+    else
+        branch=${branch##refs/heads/}
+    fi
+
+    echo -ne "\x01${GIT_BRANCH_COLOR}\x02${branch}\x01${RESET}\x02"
+    [ -n "$detached" ] && echo -ne "|\x01${GIT_DETACHED_COLOR}\x020${detached}\x01${RESET}\x02"
+}
+
+function prompt_git_changes {
+    mode='symbols' # count, symbols
+
+    num_staged=$(git diff --cached --numstat | wc -l | tr -d ' ')
+    num_unstaged=$(git diff --numstat | wc -l | tr -d ' ')
+    num_untracked=$(git ls-files --others --exclude-standard | wc -l | tr -d ' ')
+
+    STAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.added green)
+    UNSTAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.changed red)
+    UNTRACKED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.untracked red)
+
+    case "$mode" in
+        count)
+            staged=$num_staged
+            unstaged=$num_unstaged
+            untracked=$num_untracked
+            ;;
+        symbols)
+            staged="+"
+            unstaged="!"
+            untracked="?"
+            ;;
+    esac
+
+    # turns out there IS a way to escape colors from within a function, and it's
+    # using \x01 and \x02. however, trying to output numbers directly after \x02
+    # causes the first digit of the number to be consumed, so there is a 0 after
+    # each \x02 before the variable in each line of output below. I have no idea
+    # why it works, but it works :-(
+
+    delimiter='|'
+    count=0
+
+    [ "$num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${STAGED_COLOR}\x02${staged}\x01${RESET}\x02"
+    [ "$num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNSTAGED_COLOR}\x02${unstaged}\x01${RESET}\x02"
+    [ "$num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNTRACKED_COLOR}\x02${untracked}\x01${RESET}\x02"
+}
+
+function prompt_git {
+    # ask git for the git directory since we might be in a subdir
+    g=$(git rev-parse --git-dir)
+
+    branch=$(prompt_git_branch "$g")
+    changes=$(prompt_git_changes)
+    activity=$(prompt_git_activity "$g")
+
+    echo -ne "("
+    echo -ne "$branch"
+    [ -n "$activity" ] && echo -ne "|$activity"
+    echo -ne ")"
+    [ -n "$changes" ] && echo -ne " [$changes]"
+}
+
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Terminal Foregrounds
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+RESET=$(tput sgr0)
+
+# Formatting
+BOLD=$(tput bold)
+
+# 256-color Foregrounds
+LIGHT_BLUE=$(tput setaf 51)
+LIGHT_GREEN=$(tput setaf 46)
+CRIMSON=$(tput setaf 196)
+BRIGHT_WHITE='\033[1;37m'
+
+# 256-color Backgrounds
+BG_DARK_GRAY=$(tput setab 234)
+
+# Basic Prompt
+USER_HOST_COLOR="$CYAN"
+JOBS_COLOR="$BRIGHT_WHITE"
+
+# Directory
+VANILLA_PWD="$WHITE"
+SVN_PWD="${BG_DARK_GRAY}${BOLD}${LIGHT_BLUE}"
+HG_PWD="${BG_DARK_GRAY}${BOLD}${LIGHT_GREEN}"
+GIT_PWD="${BG_DARK_GRAY}${BOLD}${CRIMSON}"
+
+# git
+GIT_BRANCH_COLOR=$GREEN
+GIT_DETACHED_COLOR=$YELLOW
+GIT_ACTIVITY_COLOR=$(tput setab 17)$(tput setaf 141)
+
