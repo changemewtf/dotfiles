@@ -136,7 +136,7 @@ function prompt_git_activity {
         act_message="$act_message $step/$total"
     fi
 
-    [ -n "$act_message" ] && echo -ne "\001${GIT_ACTIVITY_COLOR}\002$act_message\001${RESET}\002"
+    [ -n "$act_message" ] && echo -ne "\x01${GIT_ACTIVITY_COLOR}\x02$act_message\x01${RESET}\x02"
 }
 
 function prompt_git_branch {
@@ -153,8 +153,8 @@ function prompt_git_branch {
         branch=${branch##refs/heads/}
     fi
 
-    echo -ne "\001${GIT_BRANCH_COLOR}\0020${branch}\001${RESET}\002"
-    [ -n "$detached" ] && echo -ne "|\001${GIT_DETACHED_COLOR}\0020${detached}\001${RESET}\002"
+    echo -ne "\x01${GIT_BRANCH_COLOR}\x02${branch}\x01${RESET}\x02"
+    [ -n "$detached" ] && echo -ne "|\x01${GIT_DETACHED_COLOR}\x020${detached}\x01${RESET}\x02"
 }
 
 function prompt_git_changes {
@@ -182,19 +182,19 @@ function prompt_git_changes {
     esac
 
     # turns out there IS a way to escape colors from within a function, and it's
-    # using \001 and \002. however, trying to output numbers directly after \002
+    # using \x01 and \x02. however, trying to output numbers directly after \x02
     # causes the first digit of the number to be consumed, so there is a 0 after
-    # each \002 before the variable in each line of output below. I have no idea
+    # each \x02 before the variable in each line of output below. I have no idea
     # why it works, but it works :-(
 
     delimiter='|'
     count=0
 
-    [ "$num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\001${STAGED_COLOR}\0020${staged}\001${RESET}\002"
+    [ "$num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${STAGED_COLOR}\x02${staged}\x01${RESET}\x02"
     [ "$num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
-    [ "$num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\001${UNSTAGED_COLOR}\0020${unstaged}\001${RESET}\002"
+    [ "$num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNSTAGED_COLOR}\x02${unstaged}\x01${RESET}\x02"
     [ "$num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
-    [ "$num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\001${UNTRACKED_COLOR}\0020${untracked}\001${RESET}\002"
+    [ "$num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNTRACKED_COLOR}\x02${untracked}\x01${RESET}\x02"
 }
 
 function prompt_git {
