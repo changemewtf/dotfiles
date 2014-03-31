@@ -81,30 +81,33 @@ au! BufNewFile,BufRead */diary/*.txt set ft=diary
 " without actually setting a hard textwidth which requires inserting CR's
 au! VimEnter */diary/*.txt vsplit | vsplit | enew | vertical resize 50 | wincmd t | enew | vertical resize 50 | wincmd l
 
+" Flowork
 au! BufNewFile,BufRead $HOME/src/flowork/Flowork/floworktg/floworktg/public/*.js setl sw=3 sts=3 fdm=indent et
 au! BufNewFile,BufRead $HOME/src/flowork/* set path+=floworktg/floworktg/public includeexpr=substitute(v:fname,'\/*','','')
 
+" Task update
 au! BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
-
 au! BufWritePost * call UpdateTaskDisplay()
 
+" Spaces Only
+au! FileType cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
+
+" Tabs Only
 au! FileType c,h setl foldmethod=syntax noexpandtab nolist
-
-au! FileType cpp setl foldmethod=syntax expandtab
-au! FileType hpp,vim,sh setl expandtab
-
-au! FileType html,htmldjango,css,javascript setl foldmethod=indent foldenable expandtab
-
-au! FileType python let b:python_highlight_all=1
-au! FileType python,ruby setl foldmethod=indent foldenable expandtab
-
-au! FileType rst setl shiftwidth=3 softtabstop=3
-
-au! FileType sass,scss setl iskeyword+=- softtabstop=2 shiftwidth=2 expandtab
-
-au! FileType diary setl wrap linebreak nolist
-
 au! FileType gitconfig setl noexpandtab nolist
+
+" Folding
+au! FileType html,eruby,htmldjango,css,javascript setl foldmethod=indent foldenable
+au! FileType python,ruby setl foldmethod=indent foldenable
+
+" Tabstop/Shiftwidth
+au! FileType rst setl softtabstop=3 shiftwidth=3
+au! FileType sass,scss setl softtabstop=2 shiftwidth=2
+
+" Other
+au! FileType python let b:python_highlight_all=1
+au! FileType sass,scss setl iskeyword+=-
+au! FileType diary setl wrap linebreak nolist
 
 " }}}
 
