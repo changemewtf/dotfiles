@@ -4,8 +4,10 @@
 
 " Basic Settings {{{
 
+" Plugins
 call pathogen#infect()
 
+" Modelines
 set modelines=2
 
 " For clever completion with the :find command
@@ -14,8 +16,8 @@ set path+=**
 " Always use bash syntax for sh filetype
 let g:is_bash=1
 
-" Activate auto filetype detection
-filetype plugin indent on
+" Color scheme
+color hhdgray
 
 " Search
 set ignorecase smartcase
@@ -55,65 +57,70 @@ set tabstop=4 shiftwidth=4 softtabstop=4
 " Status line
 set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=%-14.(%l,%c%V%)\ %P/%L
 
+" }}}
+
+" {{{ Autocommands
+
+" Clear all autocommands
+au!
+
 " Make the modification indicator [+] white on red background
 au ColorScheme * hi User1 gui=bold term=bold cterm=bold guifg=white guibg=red ctermfg=white ctermbg=red
 
 " Tweak the color of the fold display column
 au ColorScheme * hi FoldColumn cterm=bold ctermbg=233 ctermfg=146
 
-set background=dark
-color hhdgray
-
-syntax enable
-
 if has('mac')
-    autocmd BufEnter *.md exe 'noremap <F5> :!open -a "Google Chrome" %:p<CR>'
-    autocmd BufEnter *.md exe 'noremap <F6> :!open -a "Mou" %:p<CR>'
+    au BufEnter *.md exe 'noremap <F5> :!open -a "Google Chrome" %:p<CR>'
+    au BufEnter *.md exe 'noremap <F6> :!open -a "Mou" %:p<CR>'
 endif
-
-au! BufNewFile,BufRead /*apache* set ft=apache
-au! BufNewFile,BufRead /*lighttpd*.conf set ft=lighty
-au! BufNewFile,BufRead *.ejs set ft=jst.html
-au! BufNewFile,BufRead *.ce set ft=python
-au! BufNewFile,BufRead */diary/*.txt set ft=diary
 
 " create two empty side buffers to make the diary text width more readable,
 " without actually setting a hard textwidth which requires inserting CR's
-au! VimEnter */diary/*.txt vsplit | vsplit | enew | vertical resize 50 | wincmd t | enew | vertical resize 50 | wincmd l
+au VimEnter */diary/*.txt vsplit | vsplit | enew | vertical resize 50 | wincmd t | enew | vertical resize 50 | wincmd l
 
 " Flowork
-au! BufNewFile,BufRead $HOME/src/flowork/Flowork/floworktg/floworktg/public/*.js setl sw=3 sts=3 fdm=indent et
-au! BufNewFile,BufRead $HOME/src/flowork/* set path+=floworktg/floworktg/public includeexpr=substitute(v:fname,'\/*','','')
+au BufNewFile,BufRead $HOME/src/flowork/Flowork/floworktg/floworktg/public/*.js setl sw=3 sts=3 fdm=indent et
+au BufNewFile,BufRead $HOME/src/flowork/* set path+=floworktg/floworktg/public includeexpr=substitute(v:fname,'\/*','','')
 
 " Task update
-au! BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
-au! BufWritePost * call UpdateTaskDisplay()
+au BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
+au BufWritePost * call UpdateTaskDisplay()
 
 " Spaces Only
-au! FileType markdown,cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
+au FileType markdown,cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
 
 " Tabs Only
-au! FileType c,h setl foldmethod=syntax noexpandtab nolist
-au! FileType gitconfig setl noexpandtab nolist
+au FileType c,h setl foldmethod=syntax noexpandtab nolist
+au FileType gitconfig setl noexpandtab nolist
 
 " Folding
-au! FileType html,eruby,htmldjango,css,javascript setl foldmethod=indent foldenable
-au! FileType python,ruby setl foldmethod=indent foldenable
+au FileType html,eruby,htmldjango,css,javascript setl foldmethod=indent foldenable
+au FileType python,ruby setl foldmethod=indent foldenable
 
 " Tabstop/Shiftwidth
-au! FileType rst setl softtabstop=3 shiftwidth=3
-au! FileType sass,scss setl softtabstop=2 shiftwidth=2
+au FileType rst setl softtabstop=3 shiftwidth=3
+au FileType sass,scss setl softtabstop=2 shiftwidth=2
 
 " Other
-au! FileType python let b:python_highlight_all=1
-au! FileType sass,scss setl iskeyword+=-
-au! FileType diary setl wrap linebreak nolist
+au FileType python let b:python_highlight_all=1
+au FileType sass,scss setl iskeyword+=-
+au FileType diary setl wrap linebreak nolist
+
+" }}}
+
+" {{{ Syntax Hilighting
+
+" This has to happen AFTER autocommands are defined, because I run au! when,
+" defining them, and syntax hilighting is done with autocommands.
+
+" Syntax hilighting
+syntax enable
 
 " }}}
 
 " Backups & .vimrc Editing {{{
 
-" TODO Just use $VIMRUNTIME for this
 if has('win32')
     " Windows filesystem
     set directory=$HOME\VimBackups\swaps,$HOME\VimBackups,C:\VimBackups,.
@@ -121,24 +128,15 @@ if has('win32')
     if exists("&undodir")
         set undodir=$HOME\VimBackups\undofiles,$HOME\VimBackups,C:\VimBackups,.
     endif
-    " TODO who cares about pre-vim 7...
-    if($MYVIMRC == "")  " Pre-Vim 7
-        let $MYVIMRC = $VIM."\_vimrc"
-    endif
     if has("gui_running")
       set guifont=Inconsolata:h12:cANSI
     endif
 else
-    " Linux filesystem
-    " set directory=$HOME/$STY/.backups//
-    " set backupdir=$HOME/$STY/.backups//
+    " POSIX filesystem
     set directory=$HOME/.backups/swaps,$HOME/.backups,$HOME/tmp,.
     set backupdir=$HOME/.backups/backups,$HOME/.backups,$HOME/tmp,.
     if exists("&undodir")
         set undodir=$HOME/.backups/undofiles,$HOME/.backups,$HOME/tmp,.
-    endif
-    if($MYVIMRC == "")  " Pre-Vim 7
-        let $MYVIMRC = $HOME."/.vimrc"
     endif
 endif
 
