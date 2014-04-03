@@ -21,7 +21,7 @@ screen*|putty*|xterm*)
     PS1='\[$USER_HOST_COLOR\]\u@\h '
     PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
     PS1=$PS1'$( $(is_vcs $git_mask) && echo -ne " $(prompt_git)" )'
-    PS1=$PS1'$( (( $(jobs | wc -l) > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
+    PS1=$PS1'$( (( \j > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
     PS1=$PS1': '
 
     # set window title
