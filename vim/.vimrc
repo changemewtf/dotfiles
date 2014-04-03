@@ -90,7 +90,7 @@ au! BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
 au! BufWritePost * call UpdateTaskDisplay()
 
 " Spaces Only
-au! FileType cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
+au! FileType markdown,cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
 
 " Tabs Only
 au! FileType c,h setl foldmethod=syntax noexpandtab nolist
