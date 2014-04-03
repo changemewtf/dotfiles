@@ -6,8 +6,7 @@
 	br = branch
 	d = diff
 	lolmin = log --graph --oneline --decorate
-	lol =	 log --graph --decorate \
-		--format=format:'%C(auto)%h%d\n%s - %C(blue)%an%C(reset), %ar\n'
+	lol = log --graph --format=format:'%C(auto)%h%d %s - %C(blue)%an%C(reset), %ar'
 
 	files-uncommitted = diff --no-commit-id --name-only
 	files-staged = diff --no-commit-id --name-only --cached
@@ -32,7 +31,7 @@
 	ui = true
 
 [color "status"]
-	changed = magenta
+	changed = yellow
 
 [user]
 	name = Max Cantor
@@ -43,3 +42,6 @@
 
 [merge]
 	tool = vimdiff
+
+[core]
+	excludesfile = /Users/mcantor/.gitignore_global
