@@ -28,6 +28,7 @@ function set_vcs_mask {
     [[ -d .svn ]] && let "VCS_MASK |= $svn_mask"
     should_mask_vcs hg && let "VCS_MASK |= $hg_mask"
     should_mask_vcs git && let "VCS_MASK |= $git_mask"
+    return 0
 }
 
 function is_vcs {
