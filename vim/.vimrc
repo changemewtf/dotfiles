@@ -6,6 +6,7 @@
 
 " Plugins
 call pathogen#infect()
+filetype plugin indent on
 
 " Modelines
 set modelines=2
