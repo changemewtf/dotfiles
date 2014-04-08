@@ -24,11 +24,8 @@ screen*|putty*|xterm*)
     PS1=$PS1'$( (( \j > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
     PS1=$PS1': '
 
-    # set window title
-    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD/$HOME/~}\007"'
-
     # detect vcs for prompt coloring
-    PROMPT_COMMAND=$PROMPT_COMMAND' && set_vcs_mask'
+    PROMPT_COMMAND='set_vcs_mask'
 
     # one newline before printing so our output has some breathing room
     PROMPT_COMMAND=$PROMPT_COMMAND' && echo'
