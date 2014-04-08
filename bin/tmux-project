@@ -2,6 +2,9 @@
 
 SESSION=$(basename $PWD)
 
+# set window title
+echo -ne "\033]0;${SESSION}\007"
+
 tmux new-session -d -s $SESSION
 
 tmux set-window-option -g -t $SESSION automatic-rename off
