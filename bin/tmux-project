@@ -1,0 +1,18 @@
+# vim: ft=sh
+
+SESSION=$(basename $PWD)
+
+tmux new-session -d -s $SESSION
+
+tmux set-window-option -g -t $SESSION automatic-rename off
+
+tmux rename-window -t $SESSION:0 git
+tmux send-keys -t $SESSION:0 "git status" C-m
+
+tmux new-window -t $SESSION:1 -n lib
+tmux send-keys -t $SESSION:1 "if [ -e .session.vim ]; then vim -S .session.vim; else vim; fi" C-m
+
+tmux new-window -t $SESSION:2 -n bash
+
+tmux select-window -t $SESSION:0
+tmux attach -t $SESSION
