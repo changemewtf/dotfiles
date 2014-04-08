@@ -58,6 +58,9 @@ set tabstop=4 shiftwidth=4 softtabstop=4
 " Status line
 set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=%-14.(%l,%c%V%)\ %P/%L
 
+" Session saving
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize,localoptions
+
 " }}}
 
 " {{{ Autocommands
@@ -261,6 +264,9 @@ inoremap <silent> <C-_>3 <ESC>:call RSTHeader("^")<CR>o
 
 " Swap tab/space mode
 nnoremap ,<TAB> :set et! list!<CR>
+
+" Save custom session file
+command! Q mksession! .session.vim | qall!
 
 " }}}
 
