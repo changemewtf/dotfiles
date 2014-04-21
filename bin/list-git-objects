@@ -1,0 +1,2 @@
+#!/bin/bash
+find .git/objects | egrep '[0-9a-f]{38}' | ruby -n -e 'fi=$_.chomp; ob=fi.split("/")[-2..-1].join; ob_type=%x(git cat-file -t #{ob}).chomp; puts "#{ob} #{ob_type}"'
