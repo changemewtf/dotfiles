@@ -61,6 +61,11 @@ set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=
 " Session saving
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize,localoptions
 
+" netrw directory listing
+let g:netrw_banner=0
+let g:netrw_browse_split=2
+let g:netrw_altv=1
+
 " }}}
 
 " {{{ Autocommands
