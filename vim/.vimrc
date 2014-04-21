@@ -168,7 +168,7 @@ nnoremap gV `[V`]
 inoremap <C-u> <ESC>:w<CR>
 
 " Create a new HTML document.
-nnoremap ,html :set ft=html<CR>i<!doctype html><CR><html><CR><head><CR><title></title><CR><link rel="stylesheet" type="text/css" href="style.css"><CR><script type="text/javascript" src="script.js"></script><CR></head><CR><body><CR></body><CR></html><ESC>?title<CR>2hi
+nnoremap ,html :-1read $HOME/.vim/.skeleton.html<CR>3jwf>a
 
 " Bind for easy pasting
 set pastetoggle=<F12>
