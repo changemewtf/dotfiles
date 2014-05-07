@@ -157,6 +157,10 @@ endif
 nnoremap <C-n> :cn<CR>
 nnoremap <C-p> :cp<CR>
 
+" Newlines
+nnoremap <C-j> o<ESC>
+nnoremap <C-k> O<ESC>
+
 " Easy header/source swap
 nnoremap [f :call SourceHeaderSwap()<CR>
 
