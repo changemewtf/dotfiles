@@ -7,6 +7,10 @@ echo -ne "\033]0;${SESSION}\007"
 
 tmux new-session -d -s $SESSION
 
+# consider putting this in a .tmux file and using tmux source instead
+tmux unbind-key q
+tmux bind-key q send-keys -t $SESSION:1 ":Q" C-m \\\; kill-session
+
 tmux set-window-option -g -t $SESSION automatic-rename off
 
 tmux rename-window -t $SESSION:0 git
