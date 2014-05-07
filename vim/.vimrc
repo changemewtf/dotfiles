@@ -180,7 +180,8 @@ inoremap <C-u> <ESC>:w<CR>
 nnoremap ,html :-1read $HOME/.vim/.skeleton.html<CR>3jwf>a
 
 " Bind for easy pasting
-set pastetoggle=<F12>
+set pastetoggle=<C-l>
+nnoremap <C-i> :setl paste<CR>"+p:setl nopaste<CR>
 
 " De-fuckify whitespace
 nnoremap <F4> :retab<CR>:%s/\s\+$//e<CR><C-o>
