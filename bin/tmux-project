@@ -1,25 +1,8 @@
-# vim: ft=sh
+#!/bin/bash
 
-SESSION=$(basename $PWD)
+export SESSION=$(basename $PWD)
 
 # set window title
 echo -ne "\033]0;${SESSION}\007"
 
-tmux new-session -d -s $SESSION
-
-# consider putting this in a .tmux file and using tmux source instead
-tmux unbind-key q
-tmux bind-key q send-keys -t $SESSION:1 ":Q" C-m \\\; kill-session
-
-tmux set-window-option -g -t $SESSION automatic-rename off
-
-tmux rename-window -t $SESSION:0 git
-tmux send-keys -t $SESSION:0 "git status" C-m
-
-tmux new-window -t $SESSION:1 -n lib
-tmux send-keys -t $SESSION:1 "if [ -e .session.vim ]; then vim -S .session.vim; else vim; fi" C-m
-
-tmux new-window -t $SESSION:2 -n bash
-
-tmux select-window -t $SESSION:0
-tmux attach -t $SESSION
+tmux new-session -s $SESSION \; source-file ~/.common-public/sh/.tmux-project.tmux
