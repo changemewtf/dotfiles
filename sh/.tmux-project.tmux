@@ -7,7 +7,7 @@ rename-window git
 send-keys "git status" C-m
 
 new-window -n lib
-send-keys "if [ -e .session.vim ]; then reattach-to-user-namespace vim -S .session.vim; else vim; fi" C-m
+send-keys "if [ -e .session.vim ]; then reattach-to-user-namespace -l vim -S .session.vim; else reattach-to-user-namespace -l vim; fi" C-m
 
 new-window -n bash
 
