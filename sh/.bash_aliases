@@ -1,7 +1,8 @@
 # vim:ft=sh
 
+alias tree='tree -C'
 alias allup='sudo aptitude update && sudo aptitude safe-upgrade'
-alias ll='ls -l'
+alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
 alias lightest='lighttpd -t -f /etc/lighttpd/lighttpd.conf'

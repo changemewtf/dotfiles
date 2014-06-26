@@ -15,5 +15,6 @@ if [ `uname -s` = "Darwin" ]; then
 fi
 
 [[ -f ~/.local/sh/.profile ]] && . ~/.local/sh/.profile
+[[ -f ~/.api_keys ]] && . ~/.api_keys
 
 eval "$(rbenv init -)"
