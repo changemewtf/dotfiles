@@ -18,4 +18,6 @@ fi
 [[ -f ~/.local/sh/.profile ]] && . ~/.local/sh/.profile
 [[ -f ~/.api_keys ]] && . ~/.api_keys
 
-eval "$(rbenv init -)"
+if hash rbenv 2>/dev/null; then
+    eval "$(rbenv init -)"
+fi
