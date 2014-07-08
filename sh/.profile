@@ -8,6 +8,7 @@ if [ `uname -s` = "Darwin" ]; then
     # for building ruby on OS X Lion; apparently it doesn't like llvm
     export CC=gcc-4.2
     export PATH=$PATH:/usr/local/sbin
+    export NODE_PATH=/usr/local/lib/node_modules
 
     if [ -f `brew --prefix`/etc/bash_completion ]; then
         . `brew --prefix`/etc/bash_completion
