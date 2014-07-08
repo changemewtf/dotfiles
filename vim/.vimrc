@@ -62,9 +62,11 @@ set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize,localoptions
 
 " netrw directory listing
-let g:netrw_banner=0
-let g:netrw_browse_split=2
-let g:netrw_altv=1
+let g:netrw_banner=0        " disable banner
+let g:netrw_browse_split=4  " open in prior window
+let g:netrw_altv=1          " open splits to the right
+let g:netrw_winsize=-28
+let g:netrw_liststyle=3     " tree view
 
 " }}}
 
@@ -179,9 +181,8 @@ inoremap <C-u> <ESC>:w<CR>
 " Create a new HTML document.
 nnoremap ,html :-1read $HOME/.vim/.skeleton.html<CR>3jwf>a
 
-" Bind for easy pasting
-set pastetoggle=<C-l>
-nnoremap <C-i> :setl paste<CR>"+p:setl nopaste<CR>
+" Sane pasting
+command! Paste call SmartPaste()
 
 " De-fuckify whitespace
 nnoremap <F4> :retab<CR>:%s/\s\+$//e<CR><C-o>
@@ -607,6 +608,16 @@ endfunction
 " do this so it's called after everything is cleared by `syntax enable` when
 " re-sourcing .vimrc
 call UpdateTaskDisplay()
+
+" }}}
+
+" {{{ Sane Pasting
+
+function! SmartPaste()
+    setl paste
+    normal "+p
+    setl nopaste
+endfunction
 
 " }}}
 
