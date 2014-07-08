@@ -32,5 +32,14 @@ function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
 function :he { vim -c ":he $1" -c :only; }
 
 if [ `uname -s` = "Darwin" ]; then
-	alias msyql_stop='sudo /usr/local/mysql/support-files/mysql.server stop'
+    alias msyql_stop='sudo /usr/local/mysql/support-files/mysql.server stop'
+
+    if [[ $TERM == screen-* ]]; then
+        if hash reattach-to-user-namespace 2>/dev/null; then
+            alias vim='reattach-to-user-namespace -l vim'
+        else
+            echo 'System clipboard will not function in vim.' > ~/.WARNING
+        fi
+    fi
 fi
+
