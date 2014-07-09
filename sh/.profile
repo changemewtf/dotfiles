@@ -3,6 +3,18 @@ export EDITOR='vim'
 export PATCH_DIR=$HOME/.patches
 export PATCH_BACKUP_DIR=$HOME/.pbackup
 export HISTCONTROL=ignorespace:erasedups
+# when using PuTTY on Windows 7 to connect to my Macbook Air, vim complains
+# that the ¬ character is an invalid argument to the 'listchars' option if
+# its 'encoding' is 'latin-1', but setting this environment variable causes
+# vim to use 'utf-8' as the value of 'encoding', which fixes the issue.
+# I'm not sure why this doesn't happen when sshing from PuTTY... it probably
+# has to do with the env set by local login shells vs. those created by the
+# ssh daemon.
+# it seems like this affects a lot of other shell utilities as well, including
+# git: running 'git diff' before checking in this change results in <C2><AC>
+# instead of the nbsp character, but running 'LANG=en_US.utf-8 git diff' shows
+# the correct output.
+export LANG='en_US.utf-8'
 
 if [ `uname -s` = "Darwin" ]; then
     # for building ruby on OS X Lion; apparently it doesn't like llvm
