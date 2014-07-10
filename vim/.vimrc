@@ -2,11 +2,125 @@
 " Max Cantor's .vimrc File
 " "zo" to open folds, "zc" to close, "zn" to disable.
 
-" Basic Settings {{{
+" {{{ Plugins and Settings
 
-" Plugins
-call pathogen#infect()
+" Vundle is used to handle plugins.
+" https://github.com/gmarik/Vundle.vim
+
+" {{{ VUNDLE SETUP
+
+set rtp+=$HOME/.vim/bundle/Vundle.vim
+
+filetype off
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+
+" }}}
+
+" <PLUGINS>
+
+" {{{ powerline: Nifty statusline
+"     =============================
+
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+" }}}
+
+" {{{ vim-localvimrc: Project-specific vimrc's
+"     ========================================
+"
+" The 'exrc' option almost achieves this, but it only checks the *current*
+" directory; if you have a local .vimrc in your project root but open vim
+" in a subfolder, 'exrc' will miss it.
+"
+" The local .vimrc will be the very last file loaded (as indicated by
+" :scriptnames), so instead of setting things like filetypes using
+" autocommands (which are prohibited in the sandbox anyway), you just write
+" some vim script in the .lvimrc that is executed every time a buffer is
+" entered in that folder hierarchy.
+
+Plugin 'embear/vim-localvimrc'
+
+" OPTIONS:
+
+" This is a potential security leak, but I want local .vimrc's specifically
+" to set up autocommands that do stuff with filetypes, so what can ya do.
+"
+" DEFAULT: 1
+let g:localvimrc_sandbox=0
+
+" Keep the default, but set it explicitly here for self-documentation.
+"
+" DEFAULT: '.lvimrc'
+let g:localvimrc_name='.lvimrc'
+
+" Remember when I accept local .vimrc's until they are changed.
+"
+" DEFAULT: 0
+let g:localvimrc_persistent=2
+
+" For some reason, if you are in a buffer whose filetype has been set by a
+" local vimrc like so...
+"
+"   if &ft == 'html'
+"       setl ft=liquid
+"   endif
+"
+" ... the filetype will be reset to 'html' as soon as you run :Vexplore,
+" so adding 'BufLeave' to the trigger list causes the plugin to source the
+" .lvimrc immediately after the netrw pane is opened, re-re-setting the
+" filetype to 'liquid' (or whatever).
+"
+" DEFAULT: ['BufWinEnter']
+let g:localvimrc_event=['BufWinEnter', 'BufLeave']
+
+" }}}
+
+" {{{ His Home-Row-ness the Pope of Tim
+"     =================================
+
+" vim-surround: s is a text-object for delimiters; ss linewise
+Plugin 'tpope/vim-surround'
+
+" vim-commentary: gc is an operator to toggle comments; gcc linewise
+Plugin 'tpope/vim-commentary'
+
+" vim-repeat: make vim-commentary and vim-surround work with .
+Plugin 'tpope/vim-repeat'
+
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-rails'
+
+" }}}
+
+" {{{ netrw: Configuration
+"     ====================
+
+let g:netrw_banner=0        " disable banner
+let g:netrw_browse_split=4  " open in prior window
+let g:netrw_altv=1          " open splits to the right
+let g:netrw_winsize=-28     " make a li'l pane
+let g:netrw_liststyle=3     " tree view
+" hide gitignore'd files
+let g:netrw_list_hide=netrw_gitignore#Hide()
+" hide dotfiles by default (this is the string toggled by netrw-gh)
+let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+
+" }}}
+
+" </PLUGINS>
+
+" {{{ VUNDLE TEARDOWN
+
+call vundle#end()
 filetype plugin indent on
+
+" }}}
+
+" }}}
+
+" {{{ Basic Settings
 
 " Modelines
 set modelines=2
@@ -61,18 +175,15 @@ set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=
 " Session saving
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize,localoptions
 
-" netrw directory listing
-let g:netrw_banner=0        " disable banner
-let g:netrw_browse_split=4  " open in prior window
-let g:netrw_altv=1          " open splits to the right
-let g:netrw_winsize=-28
-let g:netrw_liststyle=3     " tree view
+" Word splitting
+set iskeyword+=-
 
 " }}}
 
 " {{{ Autocommands
 
 " Clear all autocommands
+" TODO: It might be more honest to put this in my ,v auto-source-vimrc binding
 au!
 
 " Make the modification indicator [+] white on red background
@@ -115,7 +226,6 @@ au FileType sass,scss setl softtabstop=2 shiftwidth=2
 
 " Other
 au FileType python let b:python_highlight_all=1
-au FileType sass,scss setl iskeyword+=-
 au FileType diary setl wrap linebreak nolist
 
 " }}}
@@ -160,8 +270,8 @@ nnoremap <C-n> :cn<CR>
 nnoremap <C-p> :cp<CR>
 
 " Newlines
-nnoremap <C-j> o<ESC>
-nnoremap <C-k> O<ESC>
+nnoremap <C-j> o<ESC>k
+nnoremap <C-k> O<ESC>j
 
 " Easy header/source swap
 nnoremap [f :call SourceHeaderSwap()<CR>
@@ -624,7 +734,12 @@ endfunction
 " }}}
 
 " Local Settings {{{
+
 if filereadable($HOME."/.local/vim/.vimrc")
     source $HOME/.local/vim/.vimrc
 endif
+
+set exrc
+set secure
+
 " }}}

@@ -17,8 +17,7 @@ export HISTCONTROL=ignorespace:erasedups
 export LANG='en_US.utf-8'
 
 if [ `uname -s` = "Darwin" ]; then
-    # for building ruby on OS X Lion; apparently it doesn't like llvm
-    export CC=gcc-4.2
+    export CC=/usr/bin/gcc
     export PATH=$PATH:/usr/local/sbin
     export NODE_PATH=/usr/local/lib/node_modules
 

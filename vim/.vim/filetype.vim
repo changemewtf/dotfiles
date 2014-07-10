@@ -1,7 +1,13 @@
-au BufNewFile,BufRead /*apache* set ft=apache
-au BufNewFile,BufRead /*lighttpd*.conf set ft=lighty
-au BufNewFile,BufRead *.ejs set ft=jst.html
-au BufNewFile,BufRead *.ce set ft=python
-au BufNewFile,BufRead */diary/*.txt set ft=diary
-au BufNewFile,BufRead *.ru set ft=ruby
-au BufNewFile,BufRead *.md set ft=markdown
+if exists("did_load_filetypes")
+  finish
+endif
+
+augroup filetypedetect
+  au! BufNewFile,BufRead /*apache*          setfiletype apache
+  au! BufNewFile,BufRead /*lighttpd*.conf   setfiletype lighty
+  au! BufNewFile,BufRead *.ejs              setfiletype jst.html
+  au! BufNewFile,BufRead *.ce               setfiletype python
+  au! BufNewFile,BufRead */diary/*.txt      setfiletype diary
+  au! BufNewFile,BufRead *.ru               setfiletype ruby
+  au! BufNewFile,BufRead *.md               setfiletype markdown
+augroup END

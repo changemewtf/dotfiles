@@ -12,6 +12,10 @@ cd $HOME
 ls -A .common-public/sh | awk '{ print ".common-public/sh/"$0 }' | xargs $LN -sf -t .
 ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
 
+mkdir -p .config
+
+$LN -sf -t .config $HOME/.common-public/powerline
+
 $LN -sf -t . .common-public/{vim/.vim,vim/.vimrc}
 $LN -sf -t . .common-private/irssi/.irssi
 
