@@ -1,0 +1,3 @@
+if &ft == 'javascript'
+    set noet nolist
+endif
