@@ -1,5 +1,6 @@
 # vim:ft=sh
 
+alias tmux-betteraria='Dropbox/Documents/code/tmux-scripts/tmux-betteraria'
 alias cdg='cd $(git root)'
 alias tree='tree -C'
 alias ll='ls -la'
