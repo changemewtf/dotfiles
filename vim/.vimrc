@@ -23,7 +23,9 @@ Plugin 'gmarik/Vundle.vim'
 " {{{ powerline: Nifty statusline
 "     =============================
 
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+if filereadable(expand("~/.local/powerline-enabled"))
+    Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+endif
 
 " }}}
 
