@@ -1,5 +1,6 @@
 # vim:ft=sh
 
+alias cdg='cd $(git root)'
 alias tree='tree -C'
 alias ll='ls -la'
 alias la='ls -A'
