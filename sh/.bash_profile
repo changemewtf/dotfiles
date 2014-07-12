@@ -27,6 +27,15 @@ LANG='en_US.utf-8'
 # Load local private API keys
 [[ -f ~/.local/sh/api_keys ]] && . ~/.local/sh/api_keys
 
+# Just override the stupid path
+PATH=$DOTFILE_DIR'/bin'
+PATH+=':/usr/local/bin'
+PATH+=':/usr/bin'
+PATH+=':/bin'
+PATH+=':/usr/sbin'
+PATH+=':/sbin'
+PATH+=':/opt/X11/bin'
+
 # These together add a noticeable delay to shell startup time. I kinda want to
 # take them out and just manually run them as needed, but that seems awfully
 # pedantic even to me.
