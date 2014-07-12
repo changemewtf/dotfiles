@@ -1,5 +1,6 @@
 # vim:ft=sh
 
+alias all_vars='(set -o posix; set) | less -R'
 alias cm='cd '$DOTFILE_DIR
 alias tmux-betteraria='Dropbox/Documents/code/tmux-scripts/tmux-betteraria'
 alias cdg='cd $(git root)'
