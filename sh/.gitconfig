@@ -30,6 +30,7 @@
 				echo \"$ref -> $upstream/${tracked##*/}\"; \
 			fi; \
 		done"
+
 	root = !pwd
 
 [color]
