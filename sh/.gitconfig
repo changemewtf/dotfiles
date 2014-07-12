@@ -4,7 +4,11 @@
 	ci = commit
 	co = checkout
 	br = branch
-	d = diff
+
+	# smart diff: if there is no difference between work dir and index, 
+	# show difference between index and HEAD.
+	d = "!if git diff --quiet; then git diff --staged; else git diff; fi"
+
 	lolmin = log --graph --oneline --decorate
 	lol = log --graph --format=format:'%C(auto)%h%d %s - %C(blue)%an%C(reset), %ar'
 
