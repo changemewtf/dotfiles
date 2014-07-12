@@ -1,0 +1,54 @@
+# vim:ft=sh
+
+# |_        .@                  \_
+# WORDS \_                              \_
+#       cannot |__|__|__| EXPRESS/ }_     |
+#       -----\ accurately /- -  "\ `/     X_.o/
+#             n----------n     -#$         _||`
+#  how ...    /          |       $        /  k\
+#        (proud l.y  I)  ._._._._|%     /
+#   ..                   /##|feel \__  /   .  .
+#     . _\`     \|/     |###/      ^ `.  ./   .  .
+#   # . [x] ---->*<     |##/about _--/
+#   .  o_/w     `-'     |#/  this|      ` .    `.
+#     {~}            _ _||fucking \_
+#                   /               |     _
+#  -  - .------====->  c o \D/  e <-|----|X|:P1/- =-
+#      _I    \  ##'|      _[_]__    |            -
+#  /| /$|\    \ +"`/__::_/ /d\ I    I
+# /  \*/ `\._*~||||-@-/  e~~~_/c_~_/|\___`_~~ _`__~_
+# `Y  -     ~~o.--/
+
+case "$TERM" in
+screen*|putty*|xterm*)
+    source $DOTFILE_DIR/sh/bash_prompt_colors
+    source $DOTFILE_DIR/sh/bash_prompt_vcs_colors
+    source $DOTFILE_DIR/sh/bash_git_prompt
+
+    PS1='\[$USER_HOST_COLOR\]\u@\h '
+    PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
+    PS1=$PS1'$( $(is_vcs $git_mask) && echo -ne " $(prompt_git)" )'
+    PS1=$PS1'$( (( \j > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
+    PS1=$PS1': '
+
+    # detect vcs for prompt coloring
+    PROMPT_COMMAND='set_vcs_mask'
+
+    # one newline before printing so our output has some breathing room
+    PROMPT_COMMAND+=' && echo'
+
+    if $(type -P dircolors &>/dev/null); then
+        eval $(dircolors -b)
+        alias ls='ls --color=auto'
+    else
+        # On OS X, get pleasant light blue back for directories
+        export CLICOLOR=1
+        export LSCOLORS=Exfxcxdxbxegedabagacad
+    fi
+    ;;
+*)
+    PS1="\u@\h \w: "
+    ;;
+esac
+
+

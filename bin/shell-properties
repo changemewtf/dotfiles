@@ -1,0 +1,8 @@
+# vim: set ft=sh
+
+# XXX: source this file, DO NOT EXECUTE IT!
+
+shopt -q login_shell && echo 'Login shell' || echo 'Not login shell'
+
+[[ $- == *i* ]] && echo 'Interactive shell' || echo 'Not interactive shell'
+

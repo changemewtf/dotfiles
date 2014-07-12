@@ -28,8 +28,6 @@ function vimsgrep {
     _no_svn_finder -print0 | xargs -0 egrep -nI "$@"
 }
 
-export -f vimsgrep
-
 function _no_svn_finder {
     SKIP_DIRS_RAW='svn'
     SKIP_EXTS_RAW='pyc pyo so o a tgz'
@@ -46,8 +44,6 @@ function _no_svn_finder {
         -type f \
         "$@"
 }
-
-export -f _no_svn_finder
 
 function sopen {
     if [[ -f $1 ]]; then
@@ -73,19 +69,19 @@ complete -F _sopen sopen
 # automating some common svnmerge.py stuff
 function mg {
     if [[ -z $(svn propget svnmerge-integrated) ]]; then
-	echo "No merge tracking in this directory; aborting."
-	return 1
+    echo "No merge tracking in this directory; aborting."
+    return 1
     fi
 
     which=$(svn info | grep ^URL | awk -F'/' '{ print $7 }')
 
     if [[ $which == "trunk" ]]; then
-	source="/python-lib/branches/DB-mcantor"
+    source="/python-lib/branches/DB-mcantor"
     elif [[ $which == "branches" ]]; then
-	source="/python-lib/trunk"
+    source="/python-lib/trunk"
     else
-	echo "Unfamiliar source $which; aborting."
-	return 1
+    echo "Unfamiliar source $which; aborting."
+    return 1
     fi
 
     cmd=$1
@@ -93,22 +89,22 @@ function mg {
 
     case $cmd in
 
-	avail)
-	    run="svnmerge.py avail -S $source $@"
-	;;
+    avail)
+        run="svnmerge.py avail -S $source $@"
+    ;;
 
-	sw) # switch branch/trunk
-	    abort_on_outstanding_changes || return 1
-	    run="svn switch $@ ${AGREPO}${source}"
-	;;
+    sw) # switch branch/trunk
+        abort_on_outstanding_changes || return 1
+        run="svn switch $@ ${AGREPO}${source}"
+    ;;
 
-	up)
-	    run="svnmerge.py merge -S $source $@"
-	;;
+    up)
+        run="svnmerge.py merge -S $source $@"
+    ;;
 
-	*) # passthru
-	    run="svnmerge.py $cmd $@"
-	;;
+    *) # passthru
+        run="svnmerge.py $cmd $@"
+    ;;
 
     esac
 
@@ -118,8 +114,8 @@ function mg {
 
 function abort_on_outstanding_changes {
     if [[ -n $(svn stat | grep -v \?) ]]; then
-	echo "Uncommitted changes; aborting."
-	return 1
+    echo "Uncommitted changes; aborting."
+    return 1
     fi
 }
 

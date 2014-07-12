@@ -1,0 +1,17 @@
+# vim:ft=sh
+
+# gimme dat completion, brew
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    source $(brew --prefix)/etc/bash_completion
+fi
+
+# tmux detaches from the "user namespace", which means processes running
+# inside it do not have access to the same clipboard as the GUI. wrapping
+# vim with this brew package is a workaround, but it works.
+if [[ $TERM == screen-* ]]; then
+    if hash reattach-to-user-namespace 2>/dev/null; then
+        alias vim='reattach-to-user-namespace -l vim'
+    else
+        echo 'System clipboard will not function in vim.'
+    fi
+fi
