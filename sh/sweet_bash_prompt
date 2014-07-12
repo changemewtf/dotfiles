@@ -37,6 +37,10 @@ screen*|putty*|xterm*)
     # one newline before printing so our output has some breathing room
     PROMPT_COMMAND+=' && echo'
 
+    # for real though, what if I just did this and had my prompt command
+    # re-evaluate my PS1 every time? it couldn't be THAT bad...
+    #PROMPT_COMMAND='PS1="$(source $DOTFILE_DIR/sh/sweet_prompt)"'
+
     if $(type -P dircolors &>/dev/null); then
         eval $(dircolors -b)
         alias ls='ls --color=auto'
