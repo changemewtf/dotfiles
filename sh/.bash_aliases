@@ -2,7 +2,7 @@
 
 alias tmux-betteraria='Dropbox/Documents/code/tmux-scripts/tmux-betteraria'
 alias cdg='cd $(git root)'
-alias tree='tree -C'
+alias tree='tree -Ca --noreport'
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
