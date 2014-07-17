@@ -1,5 +1,16 @@
 #!/bin/bash
 
+function find_broken_symlinks {
+    DIR=$1
+    shift
+    find -L $DIR -type l -maxdepth 1 "$@"
+}
+
+if [[ ! -z "$DOTFILE_DIR" ]]; then
+    echo "Please source .bashrc first so the \$DOTFILE_DIR variable is set."
+    exit 1
+fi
+
 # Try to use GNU ln if we're on OS X
 if hash gln 2>/dev/null; then
   LN='gln'
@@ -9,7 +20,10 @@ fi
 
 cd $HOME
 
-ls -A .common-public/sh | awk '{ print ".common-public/sh/"$0 }' | xargs $LN -sf -t .
+# not all dotfiles live forever
+find_broken_symlinks . -print0 | xargs -0 rm
+
+ls -A .common-public/sh | grep '^\.' | awk '{ print ".common-public/sh/"$0 }' | xargs $LN -sf -t .
 ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
 
 mkdir -p .config

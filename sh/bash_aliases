@@ -23,3 +23,5 @@ function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } 
 function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
 function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
 function :he { vim -c ":he $1" -c :only; }
+function find_symlinks { DIR=$1; shift; find $DIR -type l -maxdepth 1 "$@"; }
+function find_broken_symlinks { DIR=$1; shift; find -L $DIR -type l -maxdepth 1 "$@"; }
