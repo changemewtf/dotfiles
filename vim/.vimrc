@@ -340,6 +340,7 @@ nnoremap <silent> ZD :if &diff \| exec ':qall' \| endif<CR>
 vnoremap ,S :call CleanupSassSource()<CR>
 
 " Movement between tabs OR buffers
+"
 nnoremap <silent> L :call MyNext()<CR>
 nnoremap <silent> H :call MyPrev()<CR>
 
@@ -370,6 +371,9 @@ vnoremap \y "zy:call ScreenGet($SCREENSWAP, @z)<CR>
 " Yank current full filename into screen paste buffer
 nnoremap \f :call ScreenGet($SCREENFILE, expand('%:p'))<CR>
 
+" Quick modeline insert
+nnoremap \m ggOvim: et nolist sw=4 ts=4 sts=4<ESC>
+
 " Directory of current file (not pwd)
 cnoremap %% <C-R>=expand('%:h').'/'<CR>
 
@@ -390,6 +394,9 @@ nnoremap ,<TAB> :set et! list!<CR>
 
 " Save custom session file
 command! Q mksession! .session.vim | qall!
+
+" Quick Ruby execute wrapper
+nnoremap \rex oif __FILE__ == $0end<ESC>O
 
 " }}}
 
