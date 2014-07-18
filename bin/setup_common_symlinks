@@ -6,7 +6,7 @@ function find_broken_symlinks {
     find -L $DIR -type l -maxdepth 1 "$@"
 }
 
-if [[ ! -z "$DOTFILE_DIR" ]]; then
+if [[ -z "$DOTFILE_DIR" ]]; then
     echo "Please source .bashrc first so the \$DOTFILE_DIR variable is set."
     exit 1
 fi
