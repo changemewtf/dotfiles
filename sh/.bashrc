@@ -31,3 +31,5 @@ source $DOTFILE_DIR/sh/bash_functions
 
 # platform-specific stuff
 [ $(uname -s) = "Darwin" ] && source $DOTFILE_DIR/sh/osx_setup
+
+export DOTFILE_DIR
