@@ -29,6 +29,13 @@ endif
 
 " }}}
 
+" {{{ vim-markdown: For Jekyll
+"     ========================
+
+Plugin 'gabrielelana/vim-markdown'
+
+" }}}
+
 " {{{ vim-localvimrc: Project-specific vimrc's
 "     ========================================
 "
