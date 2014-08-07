@@ -42,5 +42,6 @@ if [ $(uname -s) = "Darwin" ]; then
     ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
     hash -r
     brew install $(tr '\n' ' ' <$DOTFILE_DIR/homebrew_packages)
+    brew install findutils --default-names
 fi
 
