@@ -1,17 +1,11 @@
 #!/bin/bash
 
-if hash gln 2>/dev/null; then
-  FIND='gfind'
-else
-  FIND='find'
-fi
-
 function find_broken_symlinks {
     DIR=$1
     shift
-    $FIND -L $DIR -maxdepth 1 -type l "$@"
+    find -L $DIR -maxdepth 1 -type l "$@"
 }
 
 # not all dotfiles live forever
-find_broken_symlinks . -print0 | xargs -0 rm
+find_broken_symlinks . -delete
 
