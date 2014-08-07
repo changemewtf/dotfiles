@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# XXX FIXME
+# find: warning: you have specified the -maxdepth option after a non-option argument -type,
+# but options are not positional (-maxdepth affects tests specified before it as well as those specified after it).
+# Please specify options before other arguments.
+#
+# rm: missing operand
+# Try 'rm --help' for more information.
+# ls: cannot access .common-private/sh: No such file or directory
+# ln: missing file operand
+# Try 'ln --help' for more information.
+
 function find_broken_symlinks {
     DIR=$1
     shift
@@ -36,3 +47,6 @@ $LN -sf -t . .common-private/irssi/.irssi
 mkdir -p .ssh
 chmod -R a=,u=rwX .ssh
 $LN -sf -t .ssh ../.common-private/ssh/config
+
+git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+mkdir -p ~/.backups/{backups,swaps,undofiles}
