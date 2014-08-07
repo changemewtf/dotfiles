@@ -1,11 +1,11 @@
-# .bashrc is read automatically by non-login shells, but most terminal clients
-# (including iTerm2 and tmux) launch bash as a login shell, so we need to
-# manually source it here.
-#
-# An example of a non-login shell is if you type "bash" into a bash prompt and
-# hit enter. The "inner", or "child" process will not be a login shell, and
-# thus it will read .bashrc directly while skipping this file.
-source ~/.bashrc
+DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
+
+# platform-specific stuff
+if [ $(uname -s) = "Darwin" ]; then
+    PLATFORM="OSX"
+else
+    PLATFORM="Linux"
+fi
 
 # Obviously.
 EDITOR='vim'
@@ -29,12 +29,26 @@ LANG='en_US.utf-8'
 
 # Just override the stupid path
 PATH=$DOTFILE_DIR'/bin'
+[ "$PLATFORM" = "OSX" ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
 PATH+=':/usr/local/bin'
 PATH+=':/usr/bin'
 PATH+=':/bin'
 PATH+=':/usr/sbin'
 PATH+=':/sbin'
-PATH+=':/opt/X11/bin'
+[ "$PLATFORM" = "OSX" ] && PATH+=':/opt/X11/bin'
+
+# Now that the PATH has been set, we can source .bashrc (certain things in
+# .bashrc may rely on the path, particularly platform-specific stuff where we
+# will want to use the GNU version of basic utils like ls, dircolors, etc.
+#
+# .bashrc is read automatically by non-login shells, but most terminal clients
+# (including iTerm2 and tmux) launch bash as a login shell, so we need to
+# manually source it here.
+#
+# An example of a non-login shell is if you type "bash" into a bash prompt and
+# hit enter. The "inner", or "child" process will not be a login shell, and
+# thus it will read .bashrc directly while skipping this file.
+source ~/.bashrc
 
 # These together add a noticeable delay to shell startup time. I kinda want to
 # take them out and just manually run them as needed, but that seems awfully
@@ -45,4 +59,4 @@ hash pyenv 2>/dev/null && eval "$(pyenv init -)"
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG
+export PATH EDITOR LANG DOTFILE_DIR PLATFORM

@@ -1,5 +1,11 @@
 # vim:ft=sh
 
+# brew coreutils manpages
+MANPATH="/usr/local/opt/coreutils/libexec/gnuman"
+
+# set LS_COLORS to color broken links in ls, among other things
+eval $(dircolors)
+
 # gimme dat completion, brew
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
     source $(brew --prefix)/etc/bash_completion
