@@ -1,27 +1,5 @@
 #!/bin/bash
 
-# XXX FIXME
-# find: warning: you have specified the -maxdepth option after a non-option argument -type,
-# but options are not positional (-maxdepth affects tests specified before it as well as those specified after it).
-# Please specify options before other arguments.
-#
-# rm: missing operand
-# Try 'rm --help' for more information.
-# ls: cannot access .common-private/sh: No such file or directory
-# ln: missing file operand
-# Try 'ln --help' for more information.
-
-function find_broken_symlinks {
-    DIR=$1
-    shift
-    find -L $DIR -type l -maxdepth 1 "$@"
-}
-
-if [[ -z "$DOTFILE_DIR" ]]; then
-    echo "Please source .bashrc first so the \$DOTFILE_DIR variable is set."
-    exit 1
-fi
-
 # Try to use GNU ln if we're on OS X
 if hash gln 2>/dev/null; then
   LN='gln'
@@ -31,22 +9,16 @@ fi
 
 cd $HOME
 
-# not all dotfiles live forever
-find_broken_symlinks . -print0 | xargs -0 rm
-
-ls -A .common-public/sh | grep '^\.' | awk '{ print ".common-public/sh/"$0 }' | xargs $LN -sf -t .
+ls -A $DOTFILE_DIR/sh | grep '^\.' | awk '{ print "'$DOTFILE_DIR'/sh/"$0 }' | xargs $LN -sf -t .
 ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
 
 mkdir -p .config
 
-$LN -sf -t .config $HOME/.common-public/powerline
+$LN -sf -t .config $DOTFILE_DIR/powerline
 
-$LN -sf -t . .common-public/{vim/.vim,vim/.vimrc}
+$LN -sf -t . $DOTFILE_DIR/{vim/.vim,vim/.vimrc}
 $LN -sf -t . .common-private/irssi/.irssi
 
 mkdir -p .ssh
 chmod -R a=,u=rwX .ssh
 $LN -sf -t .ssh ../.common-private/ssh/config
-
-git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-mkdir -p ~/.backups/{backups,swaps,undofiles}

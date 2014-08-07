@@ -1,0 +1,9 @@
+bash-completion
+coreutils
+tmux
+rbenv
+ruby-build
+postgres
+vim
+reattach-to-user-namespace
+gcc

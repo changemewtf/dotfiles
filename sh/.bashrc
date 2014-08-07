@@ -1,9 +1,4 @@
-# Default customization location
-[ ! -f $HOME/.dotfile_directory ] && echo '.common-public' > $HOME/.dotfile_directory
-
-# Most customization stuff is in here.
-DOTFILE_DIR_NAME=$(<$HOME/.dotfile_directory)
-DOTFILE_DIR="$HOME/$DOTFILE_DIR_NAME"
+DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
 
 # Set some basic shell options
 HISTCONTROL='ignorespace:erasedups' # tweak what gets added to history

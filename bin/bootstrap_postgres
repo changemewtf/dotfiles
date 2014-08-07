@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ ! $(uname -s) = "Darwin" ]; then
+    echo "This script was written for OS X"
+fi
+
+if hash initdb 2>/dev/null; then
+    echo "initdb available, assuming that means postgres is good to go"
+fi
+
+initdb /usr/local/var/postgres -E utf8
+createdb ${USER}
+# Ensure that Postgres launches whenever we login
+mkdir -p ~/Library/LaunchAgents
+cp /usr/local/Cellar/postgresql/9.*/homebrew.mxcl.postgresql.plist ~/Library/LaunchAgents/
+# Start Postgres now
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+

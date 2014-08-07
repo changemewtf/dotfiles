@@ -1,0 +1,46 @@
+#!/bin/bash
+
+[[ -z "$EMAIL" ]] && EMAIL="max@maxcantor.net"
+[[ -z "$DOTFILE_DIR" ]] && DOTFILE_DIR="$HOME/.common-public"
+
+echo $DOTFILE_DIR > $HOME/.dotfile_directory
+
+# setup new ssh key
+[ -d .ssh ] && mkdir .ssh
+chmod 700 .ssh
+ssh-keygen -t rsa -N "" -C "$EMAIL" -f .ssh/id_rsa
+chmod 600 .ssh/id_rsa
+
+GITHUB_SSH_URL=https://github.com/settings/ssh
+
+if [ $(uname -s) = "Darwin" ]; then
+    pbcopy < .ssh/id_rsa.pub
+    open $GITHUB_SSH_URL
+else
+    cat .ssh/id_rsa.pub
+    echo
+    echo $GITHUB_SSH_URL
+fi
+
+read -p "Hit ENTER after adding GitHub pubkey"
+
+git clone git@github.com:mcantor/dotfiles.git $DOTFILE_DIR
+git clone makoto.kenpachi.net:common.git .common-private
+
+# setup dotfile symlinks
+source $HOME/.bashrc
+$DOTFILE_DIR/bin/setup_common_symlinks
+
+# vim stuff
+mkdir -p ~/.backups/{backups,swaps,undofiles}
+
+git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+vim +PluginInstall +qall
+
+# OS X stuff
+if [ $(uname -s) = "Darwin" ]; then
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+    hash -r
+    brew install $(tr '\n' ' ' <$DOTFILE_DIR/homebrew_packages)
+fi
+
