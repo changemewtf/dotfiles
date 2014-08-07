@@ -21,7 +21,7 @@ Plugin 'gmarik/Vundle.vim'
 " <PLUGINS>
 
 " {{{ powerline: Nifty statusline
-"     =============================
+"     ===========================
 
 if filereadable(expand("~/.local/powerline-enabled"))
     Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
@@ -29,8 +29,8 @@ endif
 
 " }}}
 
-" {{{ vim-markdown: For Jekyll
-"     ========================
+" {{{ vim-markdown: md + liquid + yaml
+"     ================================
 
 Plugin 'gabrielelana/vim-markdown'
 
@@ -90,6 +90,7 @@ let g:localvimrc_event=['BufWinEnter', 'BufLeave']
 "     =================================
 
 " vim-surround: s is a text-object for delimiters; ss linewise
+" ys to add surround
 Plugin 'tpope/vim-surround'
 
 " vim-commentary: gc is an operator to toggle comments; gcc linewise
@@ -97,6 +98,9 @@ Plugin 'tpope/vim-commentary'
 
 " vim-repeat: make vim-commentary and vim-surround work with .
 Plugin 'tpope/vim-repeat'
+
+" vim-liquid: syntax stuff
+Plugin 'tpope/vim-liquid'
 
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-rails'
