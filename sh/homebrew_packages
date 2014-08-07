@@ -1,5 +1,6 @@
 bash-completion
 coreutils
+findutils
 tmux
 rbenv
 ruby-build
