@@ -1,3 +1,5 @@
+DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
+
 # Set some basic shell options
 HISTCONTROL='ignorespace:erasedups' # tweak what gets added to history
 shopt -s histappend # multiple terminals don't clobber each others' history
