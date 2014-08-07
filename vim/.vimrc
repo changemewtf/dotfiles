@@ -227,7 +227,7 @@ au FileType markdown,cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,
 
 " Tabs Only
 au FileType c,h setl foldmethod=syntax noexpandtab nolist
-au FileType gitconfig setl noexpandtab nolist
+au FileType gitconfig,apache setl noexpandtab nolist
 
 " Folding
 au FileType html,eruby,htmldjango,css,javascript setl foldmethod=indent foldenable
