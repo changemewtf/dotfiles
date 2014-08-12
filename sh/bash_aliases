@@ -19,6 +19,7 @@ alias ,e='vim $HOME/.vimrc'
 alias which='type -a'
 alias wget='wget --content-disposition'
 alias loc="find . -type f -iname \"*.rb\" -exec cat {} \; | sed '/^\s*#/d;/^\s*$/d' | wc -l"
+alias rbdoc="cd ~/my-ruby/src/ruby-2.1.2 && yard server -m core .yardoc-core stdlib-2.1.2 .yardoc-stdlib"
 function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } # to be piped after a diff
 function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
 function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }

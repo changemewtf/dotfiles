@@ -29,13 +29,6 @@ endif
 
 " }}}
 
-" {{{ vim-markdown: md + liquid + yaml
-"     ================================
-
-Plugin 'gabrielelana/vim-markdown'
-
-" }}}
-
 " {{{ vim-localvimrc: Project-specific vimrc's
 "     ========================================
 "
