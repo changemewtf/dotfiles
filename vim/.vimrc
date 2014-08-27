@@ -271,6 +271,12 @@ endif
 
 " Key Mappings {{{
 
+" Run shell command
+" ... and print output
+nnoremap <C-h> :.w !bash<CR>
+" ... and append output
+nnoremap <C-l> yyp!!bash<CR>
+
 " Easy quickfix navigation
 nnoremap <C-n> :cn<CR>
 nnoremap <C-p> :cp<CR>
