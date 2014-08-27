@@ -22,24 +22,30 @@
 case "$TERM" in
 screen*|putty*|xterm*)
     source $DOTFILE_DIR/sh/bash_prompt_colors
-    source $DOTFILE_DIR/sh/bash_prompt_vcs_colors
-    source $DOTFILE_DIR/sh/bash_git_prompt
 
-    PS1='\[$USER_HOST_COLOR\]\u@\h '
-    PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
-    PS1=$PS1'$( $(is_vcs $git_mask) && echo -ne " $(prompt_git)" )'
-    PS1=$PS1'$( (( \j > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
-    PS1=$PS1': '
+    if [ "$ITERM_PROFILE" = "Presenting" ]; then
+        source $DOTFILE_DIR/sh/presenting_prompt
+    else
+        source $DOTFILE_DIR/sh/bash_prompt_vcs_colors
+        source $DOTFILE_DIR/sh/bash_git_prompt
 
-    # detect vcs for prompt coloring
-    PROMPT_COMMAND='set_vcs_mask'
+        PS1='\[$USER_HOST_COLOR\]\u@\h '
+        PS1=$PS1'\[$(get_vcs_pwd_color)\]\w\[$RESET\]'
+        PS1=$PS1'$( $(is_vcs $git_mask) && echo -ne " $(prompt_git)" )'
+        PS1=$PS1'$( (( \j > 0 )) && echo -ne " (\[$JOBS_COLOR\]\j\[$RESET\])" )'
+        PS1=$PS1': '
 
-    # one newline before printing so our output has some breathing room
-    PROMPT_COMMAND+=' && echo'
+        # detect vcs for prompt coloring
+        PROMPT_COMMAND='set_vcs_mask'
 
-    # for real though, what if I just did this and had my prompt command
-    # re-evaluate my PS1 every time? it couldn't be THAT bad...
-    #PROMPT_COMMAND='PS1="$(source $DOTFILE_DIR/sh/sweet_prompt)"'
+        # one newline before printing so our output has some breathing room
+        PROMPT_COMMAND+=' && echo'
+
+        # for real though, what if I just did this and had my prompt command
+        # re-evaluate my PS1 every time? it couldn't be THAT bad...
+        #PROMPT_COMMAND='PS1="$(source $DOTFILE_DIR/sh/sweet_prompt)"'
+
+    fi
 
     if $(type -P dircolors &>/dev/null); then
         eval $(dircolors -b)
