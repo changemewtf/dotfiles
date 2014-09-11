@@ -56,7 +56,10 @@ source ~/.bashrc
 hash rbenv 2>/dev/null && eval "$(rbenv init -)"
 hash pyenv 2>/dev/null && eval "$(pyenv init -)"
 
+# For convenient editing of ruby projects and gems
+RUBYLIB='lib'
+
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG PLATFORM
+export PATH EDITOR LANG PLATFORM RUBYLIB
