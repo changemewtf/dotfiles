@@ -1,6 +1,6 @@
 # vim:ft=sh
 
-PS1="${BLUE}"'${PWD##*/}'"${RESET} $ "
+PS1='\[${BLUE}\]${PWD##*/}\[${RESET}\] $ '
 
 echo "${RED}${PWD}${RESET}"
 
