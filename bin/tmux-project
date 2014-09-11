@@ -1,6 +1,10 @@
 #!/bin/bash
 
-export SESSION=$(basename $PWD)
+if [ $# -eq 0 ]; then
+    export SESSION=$(basename $PWD)
+else
+    export SESSION=$1
+fi
 
 # set window title
 echo -ne "\033]0;${SESSION}\007"
