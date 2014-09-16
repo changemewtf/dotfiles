@@ -271,6 +271,9 @@ endif
 
 " Key Mappings {{{
 
+" Unmap annoying doc lookup
+nnoremap K <Nop>
+
 " Run shell command
 " ... and print output
 nnoremap <C-h> :.w !bash<CR>
