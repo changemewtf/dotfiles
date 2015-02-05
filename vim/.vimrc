@@ -29,6 +29,14 @@ endif
 
 " }}}
 
+" {{{ coffeescript
+"     ============
+
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'mtscout6/vim-cjsx'
+
+" }}}
+
 " {{{ vim-localvimrc: Project-specific vimrc's
 "     ========================================
 "
@@ -207,26 +215,22 @@ endif
 " without actually setting a hard textwidth which requires inserting CR's
 au VimEnter */diary/*.txt vsplit | vsplit | enew | vertical resize 50 | wincmd t | enew | vertical resize 50 | wincmd l
 
-" Flowork
-au BufNewFile,BufRead $HOME/src/flowork/Flowork/floworktg/floworktg/public/*.js setl sw=3 sts=3 fdm=indent et
-au BufNewFile,BufRead $HOME/src/flowork/* set path+=floworktg/floworktg/public includeexpr=substitute(v:fname,'\/*','','')
-
 " Task update
 au BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
 au BufWritePost * call UpdateTaskDisplay()
 
 " Spaces Only
-au FileType markdown,cpp,hpp,vim,sh,html,eruby,htmldjango,css,javascript,python,ruby,sass,scss setl expandtab list
+au FileType markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
 
 " Tabs Only
 au FileType c,h setl foldmethod=syntax noexpandtab nolist
 au FileType gitconfig,apache setl noexpandtab nolist
 
 " Folding
-au FileType html,eruby,htmldjango,css,javascript setl foldmethod=indent foldenable
-au FileType python,ruby setl foldmethod=indent foldenable
+au FileType html,htmldjango,css,sass,javascript,coffee,python,ruby,eruby setl foldmethod=indent foldenable
 
 " Tabstop/Shiftwidth
+au FileType ruby,eruby,javascript,coffee setl softtabstop=2 shiftwidth=2
 au FileType rst setl softtabstop=3 shiftwidth=3
 au FileType sass,scss setl softtabstop=2 shiftwidth=2
 
