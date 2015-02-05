@@ -30,12 +30,17 @@ LANG='en_US.utf-8'
 # Just override the stupid path
 PATH=$DOTFILE_DIR'/bin'
 [ "$PLATFORM" = "OSX" ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
+PATH+=':/usr/local/heroku/bin'
 PATH+=':/usr/local/bin'
 PATH+=':/usr/bin'
 PATH+=':/bin'
 PATH+=':/usr/sbin'
 PATH+=':/sbin'
 [ "$PLATFORM" = "OSX" ] && PATH+=':/opt/X11/bin'
+PATH+=":$HOME/bin"
+
+export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
+
 
 # Now that the PATH has been set, we can source .bashrc (certain things in
 # .bashrc may rely on the path, particularly platform-specific stuff where we
