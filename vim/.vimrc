@@ -20,13 +20,6 @@ Plugin 'gmarik/Vundle.vim'
 
 " <PLUGINS>
 
-" {{{ vim-coffee-script: coffeescript support
-"     =======================================
-
-Plugin 'kchmck/vim-coffee-script'
-
-" }}}
-
 " {{{ powerline: Nifty statusline
 "     ===========================
 
