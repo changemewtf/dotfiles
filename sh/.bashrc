@@ -25,5 +25,3 @@ source $DOTFILE_DIR/sh/bash_functions
 [ -f /etc/bash_completion ] && source /etc/bash_completion
 
 [ "$PLATFORM" = "OSX" ] && source $DOTFILE_DIR/sh/osx_setup
-
-source /usr/local/etc/ga/bash_completion.sh
