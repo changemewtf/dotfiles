@@ -41,7 +41,6 @@ PATH+=":$HOME/bin"
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
 
-
 # Now that the PATH has been set, we can source .bashrc (certain things in
 # .bashrc may rely on the path, particularly platform-specific stuff where we
 # will want to use the GNU version of basic utils like ls, dircolors, etc.
