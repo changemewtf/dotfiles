@@ -1,44 +1,69 @@
 #!/bin/bash
 
 [[ -z "$EMAIL" ]] && EMAIL="max@maxcantor.net"
-[[ -z "$DOTFILE_DIR" ]] && DOTFILE_DIR="$HOME/.common-public"
+[[ -z "$DOTFILE_DIRNAME" ]] && DOTFILE_DIRNAME=".common-public"
 
-echo $DOTFILE_DIR > $HOME/.dotfile_directory
+echo $DOTFILE_DIRNAME > $HOME/.dotfile_directory
+
+DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
 
 # setup new ssh key
-[ -d .ssh ] && mkdir .ssh
-chmod 700 .ssh
-ssh-keygen -t rsa -N "" -C "$EMAIL" -f .ssh/id_rsa
-chmod 600 .ssh/id_rsa
+if ! [ -d .ssh ]; then
+    echo "Generating a new SSH key..."
 
-GITHUB_SSH_URL=https://github.com/settings/ssh
+    mkdir .ssh
+    chmod 700 .ssh
+    ssh-keygen -t rsa -N "" -C "$EMAIL" -f .ssh/id_rsa
+    chmod 600 .ssh/id_rsa
 
-if [ $(uname -s) = "Darwin" ]; then
-    pbcopy < .ssh/id_rsa.pub
-    open $GITHUB_SSH_URL
+    GITHUB_SSH_URL=https://github.com/settings/ssh
+
+    if [ $(uname -s) = "Darwin" ]; then
+        pbcopy < .ssh/id_rsa.pub
+        open $GITHUB_SSH_URL
+    else
+        cat .ssh/id_rsa.pub
+        echo
+        echo $GITHUB_SSH_URL
+    fi
 else
-    cat .ssh/id_rsa.pub
-    echo
-    echo $GITHUB_SSH_URL
+    echo ".ssh directory already exists, not generating."
 fi
 
 read -p "Hit ENTER after adding GitHub pubkey"
 
-git clone git@github.com:mcantor/dotfiles.git $DOTFILE_DIR
-git clone makoto.kenpachi.net:common.git .common-private
+if ! [ -d $DOTFILE_DIR ]; then
+    git clone git@github.com:mcantor/dotfiles.git $DOTFILE_DIR
+else
+    echo "${DOTFILE_DIR} already exists; not cloning."
+fi
+if ! [ -d .common-private ]; then
+    git clone makoto.kenpachi.net:common.git .common-private
+else
+    echo ".common-private already exists; not cloning."
+fi
 
 # setup dotfile symlinks
+echo "Sourcing bash profile"
+source $HOME/.bash_profile
+echo "Sourcing bashrc..."
 source $HOME/.bashrc
+echo "Setting up home directory symlinks..."
 $DOTFILE_DIR/bin/setup_common_symlinks
 
 # vim stuff
+echo "Creating vim swap directories..."
 mkdir -p ~/.backups/{backups,swaps,undofiles}
 
-git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-vim +PluginInstall +qall
+if ! [ -d ~/.vim/bundle/Vundle.vim ]; then
+    echo "Installing Vundle for Vim..."
+    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    vim +PluginInstall +qall
+fi
 
 # OS X stuff
 if [ $(uname -s) = "Darwin" ]; then
+    echo "Installing Homebrew..."
     ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
     hash -r
     brew install $(tr '\n' ' ' <$DOTFILE_DIR/homebrew_packages)
