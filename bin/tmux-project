@@ -6,6 +6,8 @@ else
     export SESSION=$1
 fi
 
+SESSION=${SESSION//./}
+
 # set window title
 echo -ne "\033]0;${SESSION}\007"
 
