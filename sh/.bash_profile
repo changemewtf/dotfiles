@@ -24,6 +24,9 @@ EDITOR='vim'
 # the correct output.
 LANG='en_US.utf-8'
 
+# https://golang.org/doc/code.html#GOPATH
+GOPATH="$HOME/src/go"
+
 # Load local private API keys
 [[ -f ~/.local/sh/api_keys ]] && . ~/.local/sh/api_keys
 
@@ -38,6 +41,7 @@ PATH+=':/usr/sbin'
 PATH+=':/sbin'
 [ "$PLATFORM" = "OSX" ] && PATH+=':/opt/X11/bin'
 PATH+=":$HOME/bin"
+PATH+=":$GOPATH/bin"
 
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
 
@@ -66,4 +70,4 @@ RUBYLIB='lib'
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG PLATFORM RUBYLIB
+export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH

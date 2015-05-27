@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function has_ruby {
+    [ -e .ruby-version ] && return 0
+    return 1
+}
+
+function prompt_ruby {
+    version=$(<.ruby-version)
+    rbenv versions --bare | grep -Fxq "$version"
+    if [ $? -eq 0 ]; then
+        installed='true'
+    else
+        installed='false'
+    fi
+
+    echo -ne "<"
+    if [ "$installed" = true ]; then
+        echo -ne "\x01${BRIGHT_WHITE}\x02"
+    else
+        echo -ne "\x01${RED}\x02"
+    fi
+    echo -ne $version
+    echo -ne "\x01${RESET}\x02"
+    echo -ne ">"
+}
