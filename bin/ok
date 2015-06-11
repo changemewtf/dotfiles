@@ -9,6 +9,8 @@ if sys.argv[1] == 'start_postgres':
 elif sys.argv[1] == 'stop_postgres':
     # OS X only
     cmd = 'pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+elif sys.argv[1] == 'check_postgres':
+    cmd = 'pg_ctl -D /usr/local/var/postgres status'
 else:
     cmd = None
 
