@@ -10,4 +10,5 @@ augroup filetypedetect
   au! BufNewFile,BufRead */diary/*.txt      setfiletype diary
   au! BufNewFile,BufRead *.ru               setfiletype ruby
   au! BufNewFile,BufRead *.md               setfiletype markdown
+  au! BufNewFile,BufRead *.hbs              setfiletype mustache
 augroup END
