@@ -1,4 +1,4 @@
-" vim: fdm=marker foldenable
+" vim: fdm=marker foldenable sw=4 ts=4 sts=4
 " Max Cantor's .vimrc File
 " "zo" to open folds, "zc" to close, "zn" to disable.
 
@@ -34,6 +34,13 @@ endif
 
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'mtscout6/vim-cjsx'
+
+" }}}
+
+" {{{ ember
+"     =====
+
+Plugin 'mustache/vim-mustache-handlebars'
 
 " }}}
 
@@ -105,6 +112,14 @@ Plugin 'tpope/vim-liquid'
 
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-vinegar'
+
+" }}}
+
+" {{{ NERDTree
+"     ========
+
+Plugin 'scrooloose/nerdtree'
 
 " }}}
 
@@ -181,10 +196,10 @@ set complete-=i
 
 " Formatting
 set nowrap
-set tabstop=4 shiftwidth=4 softtabstop=4
+set tabstop=2 shiftwidth=2 softtabstop=2
 
 " Status line
-set statusline=%F%(\ %h%1*%m%*%r%w%)\ (%{&ff}%(\/%Y%))\ [\%03.3b]\ [0x\%02.2B]%=%-14.(%l,%c%V%)\ %P/%L
+set statusline=%!MyStatusLine()
 
 " Session saving
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize,localoptions
@@ -220,7 +235,7 @@ au BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
 au BufWritePost * call UpdateTaskDisplay()
 
 " Spaces Only
-au FileType markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
+au FileType mustache,markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
 
 " Tabs Only
 au FileType c,h setl foldmethod=syntax noexpandtab nolist
@@ -228,11 +243,12 @@ au FileType gitconfig,apache setl noexpandtab nolist
 
 " Folding
 au FileType html,htmldjango,css,sass,javascript,coffee,python,ruby,eruby setl foldmethod=indent foldenable
+" Auto-open all folds
+" au BufRead * normal zR
 
 " Tabstop/Shiftwidth
-au FileType ruby,eruby,javascript,coffee setl softtabstop=2 shiftwidth=2
-au FileType rst setl softtabstop=3 shiftwidth=3
-au FileType sass,scss setl softtabstop=2 shiftwidth=2
+au FileType mustache,ruby,eruby,javascript,coffee,sass,scss setl softtabstop=2 shiftwidth=2 tabstop=2
+au FileType rst setl softtabstop=3 shiftwidth=3 tabstop=3
 
 " Other
 au FileType python let b:python_highlight_all=1
@@ -418,6 +434,31 @@ nnoremap \rex oif __FILE__ == $0end<ESC>O
 " }}}
 
 " Custom Functions {{{
+
+" MyStatusLine() {{{
+
+function! MyStatusLine()
+    let statusline = ""
+    " Filename (F -> full, f -> relative)
+    let statusline .= "%f"
+    " Buffer flags
+    let statusline .= "%( %h%1*%m%*%r%w%) "
+    " File format and type
+    let statusline .= "(%{&ff}%(\/%Y%))"
+    " Left/right separator
+    let statusline .= "%="
+    " Line & column
+    let statusline .= "(%l,%c%V) "
+    " Character under cursor (decimal)
+    let statusline .= "%03.3b "
+    " Character under cursor (hexadecimal)
+    let statusline .= "0x%02.2B "
+    " File progress
+    let statusline .= "| %P/%L"
+    return statusline
+endfunction
+
+" }}}
 
 " CleanupSassSource() {{{
 
@@ -769,3 +810,7 @@ set exrc
 set secure
 
 " }}}
+
+" copy current filename to system clipboard
+" let @+ = expand("%")
+
