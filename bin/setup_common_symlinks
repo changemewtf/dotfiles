@@ -11,16 +11,25 @@ fi
 
 cd $HOME
 
+ls -A $DOTFILE_DIR/sh | grep '^\.' | awk '{ print "'$DOTFILE_DIR'/sh/"$0 }'
 ls -A $DOTFILE_DIR/sh | grep '^\.' | awk '{ print "'$DOTFILE_DIR'/sh/"$0 }' | xargs $LN -sf -t .
-ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
+
+if [ -d .common-private ]; then
+  ls -A .common-private/sh | awk '{ print ".common-private/sh/"$0 }' | xargs $LN -sf -t .
+fi
 
 mkdir -p .config
 
 $LN -sf -t .config $DOTFILE_DIR/powerline
 
 $LN -sf -t . $DOTFILE_DIR/{vim/.vim,vim/.vimrc}
-$LN -sf -t . .common-private/irssi/.irssi
+
+if [ -d .common-private ]; then
+  $LN -sf -t . .common-private/irssi/.irssi
+fi
 
 mkdir -p .ssh
 chmod -R a=,u=rwX .ssh
-$LN -sf -t .ssh ../.common-private/ssh/config
+if [ -d .common-private ]; then
+  $LN -sf -t .ssh ../.common-private/ssh/config
+fi

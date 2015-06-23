@@ -27,29 +27,46 @@ if ! [ -d .ssh ]; then
         echo
         echo $GITHUB_SSH_URL
     fi
+
+    read -p "Hit ENTER after adding GitHub pubkey"
 else
     echo ".ssh directory already exists, not generating."
 fi
 
-read -p "Hit ENTER after adding GitHub pubkey"
-
 if ! [ -d $DOTFILE_DIR ]; then
+    echo "Getting dotfiles..."
     git clone git@github.com:mcantor/dotfiles.git $DOTFILE_DIR
 else
     echo "${DOTFILE_DIR} already exists; not cloning."
 fi
 
-if ! [ -d .common-private -a "$GET_PRIVATE" = true ]; then
-    git clone makoto.kenpachi.net:common.git .common-private
-else
+if [ -d .common-private ]; then
     echo ".common-private already exists; not cloning."
+elif [ "$GET_PRIVATE" = false ]; then
+    echo "\$GET_PRIVATE set to false; not cloning."
+else
+    echo "Getting private files..."
+    git clone makoto.kenpachi.net:common.git .common-private
+fi
+
+# OS X stuff
+# homebrew must come first so we have ln from coreutils, which
+# is expected by the setup_common_symlinks script
+if [ $(uname -s) = "Darwin" ] && hash brew 2>/dev/null; then
+    echo "Installing Homebrew..."
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    hash -r
+    if ! hash brew 2>/dev/null; then
+        echo "brew did not seem to install successfully."
+        exit 1
+    fi
+    brew install $(tr '\n' ' ' <$DOTFILE_DIR/sh/homebrew_packages)
+    brew install findutils --with-default-names
 fi
 
 # setup dotfile symlinks
 echo "Sourcing bash profile"
-source $HOME/.bash_profile
-echo "Sourcing bashrc..."
-source $HOME/.bashrc
+source $DOTFILE_DIR/sh/.bash_profile
 echo "Setting up home directory symlinks..."
 $DOTFILE_DIR/bin/setup_common_symlinks
 
@@ -61,14 +78,5 @@ if ! [ -d ~/.vim/bundle/Vundle.vim ]; then
     echo "Installing Vundle for Vim..."
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     vim +PluginInstall +qall
-fi
-
-# OS X stuff
-if [ $(uname -s) = "Darwin" ]; then
-    echo "Installing Homebrew..."
-    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-    hash -r
-    brew install $(tr '\n' ' ' <$DOTFILE_DIR/homebrew_packages)
-    brew install findutils --default-names
 fi
 

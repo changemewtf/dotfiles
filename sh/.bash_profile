@@ -2,9 +2,9 @@ DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
 
 # platform-specific stuff
 if [ $(uname -s) = "Darwin" ]; then
-    PLATFORM="OSX"
+  PLATFORM="OSX"
 else
-    PLATFORM="Linux"
+  PLATFORM="Linux"
 fi
 
 # Obviously.
@@ -32,18 +32,24 @@ GOPATH="$HOME/src/go"
 
 # Just override the stupid path
 PATH=$DOTFILE_DIR'/bin'
-[ "$PLATFORM" = "OSX" ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
-PATH+=':/usr/local/heroku/bin'
-PATH+=':/usr/local/bin'
+
+# OSX stuff
+if [ "$PLATFORM" = "OSX" ]; then
+  [ -d /opt/X11/bin ] && PATH+=':/opt/X11/bin'
+  [ -d /usr/local/bin ] && PATH+=':/usr/local/bin'
+  hash heroku 2>/dev/null && PATH+=':/usr/local/heroku/bin'
+  hash pg_config 2>/dev/null && PATH+=":$(pg_config --bindir)"
+  [ -d /usr/local/opt/coreutils/libexec/gnubin ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
+fi
+
+# system stuff
 PATH+=':/usr/bin'
 PATH+=':/bin'
 PATH+=':/usr/sbin'
 PATH+=':/sbin'
-[ "$PLATFORM" = "OSX" ] && PATH+=':/opt/X11/bin'
-PATH+=":$HOME/bin"
-PATH+=":$GOPATH/bin"
 
-export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
+# other stuff
+[ -d "$GOPATH/bin" ] && PATH+=":$GOPATH/bin"
 
 # Now that the PATH has been set, we can source .bashrc (certain things in
 # .bashrc may rely on the path, particularly platform-specific stuff where we
@@ -56,7 +62,7 @@ export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin
 # An example of a non-login shell is if you type "bash" into a bash prompt and
 # hit enter. The "inner", or "child" process will not be a login shell, and
 # thus it will read .bashrc directly while skipping this file.
-source ~/.bashrc
+source $DOTFILE_DIR/sh/.bashrc
 
 # These together add a noticeable delay to shell startup time. I kinda want to
 # take them out and just manually run them as needed, but that seems awfully
