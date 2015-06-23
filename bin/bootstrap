@@ -2,6 +2,7 @@
 
 [[ -z "$EMAIL" ]] && EMAIL="max@maxcantor.net"
 [[ -z "$DOTFILE_DIRNAME" ]] && DOTFILE_DIRNAME=".common-public"
+[[ -z "$GET_PRIVATE" ]] && GET_PRIVATE=true
 
 echo $DOTFILE_DIRNAME > $HOME/.dotfile_directory
 
@@ -37,7 +38,8 @@ if ! [ -d $DOTFILE_DIR ]; then
 else
     echo "${DOTFILE_DIR} already exists; not cloning."
 fi
-if ! [ -d .common-private ]; then
+
+if ! [ -d .common-private -a "$GET_PRIVATE" = true ]; then
     git clone makoto.kenpachi.net:common.git .common-private
 else
     echo ".common-private already exists; not cloning."
