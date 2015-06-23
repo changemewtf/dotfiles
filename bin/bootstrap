@@ -52,16 +52,30 @@ fi
 # OS X stuff
 # homebrew must come first so we have ln from coreutils, which
 # is expected by the setup_common_symlinks script
-if [ $(uname -s) = "Darwin" ] && hash brew 2>/dev/null; then
+if [ $(uname -s) = "Darwin" ]; then
+  if hash brew 2>/dev/null; then
     echo "Installing Homebrew..."
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     hash -r
+
     if ! hash brew 2>/dev/null; then
         echo "brew did not seem to install successfully."
         exit 1
     fi
-    brew install $(tr '\n' ' ' <$DOTFILE_DIR/sh/homebrew_packages)
-    brew install findutils --with-default-names
+  fi
+
+  brew install $(tr '\n' ' ' <$DOTFILE_DIR/sh/homebrew_packages)
+  brew install findutils --with-default-names
+
+  if brew ls redis 2>/dev/null; then
+    ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents
+    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.redis.plist
+  fi
+
+  if brew ls postgres 2>/dev/null; then
+    ln -sfv /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
+    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+  fi
 fi
 
 # setup dotfile symlinks

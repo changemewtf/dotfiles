@@ -4,6 +4,7 @@ tmux
 rbenv
 ruby-build
 postgres
+redis
 vim
 reattach-to-user-namespace
 gcc
