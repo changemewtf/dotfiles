@@ -9,9 +9,10 @@
 
 " {{{ VUNDLE SETUP
 
-set rtp+=$HOME/.vim/bundle/Vundle.vim
 
+set nocompatible
 filetype off
+set rtp+=$HOME/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
@@ -37,10 +38,31 @@ Plugin 'mtscout6/vim-cjsx'
 
 " }}}
 
+" {{{ vim-scala
+"     =========
+
+Plugin 'derekwyatt/vim-scala'
+
+" }}}
+
 " {{{ ember
 "     =====
 
 Plugin 'mustache/vim-mustache-handlebars'
+
+" }}}
+
+" {{{ vim-ruby-heredoc-syntax
+"     =======================
+
+Plugin 'joker1007/vim-ruby-heredoc-syntax'
+
+" }}}
+
+" {{{ writable_search
+"     ===============
+
+Plugin 'AndrewRadev/writable_search.vim'
 
 " }}}
 
@@ -111,6 +133,7 @@ Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-liquid'
 
 Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-vinegar'
 
@@ -120,6 +143,11 @@ Plugin 'tpope/vim-vinegar'
 "     ========
 
 Plugin 'scrooloose/nerdtree'
+
+" OPTIONS:
+
+" Get rid of objects in C projects
+let NERDTreeIgnore=['\~$', '.o$[[file]]']
 
 " }}}
 
