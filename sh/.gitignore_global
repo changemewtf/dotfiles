@@ -1,0 +1,19 @@
+# Shared
+*.db
+tags
+
+# C
+*.o
+
+# OS X
+.DS_Store
+
+# JavaScript
+node_modules
+bower_components
+
+# sass
+.sass-cache/
+
+# Python
+__pycache__/
