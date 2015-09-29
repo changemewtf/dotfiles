@@ -17,3 +17,4 @@ bower_components
 
 # Python
 __pycache__/
+.virtualenv/
