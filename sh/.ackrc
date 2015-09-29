@@ -1,0 +1,4 @@
+--ignore-directory=is:node_modules
+--ignore-directory=is:bower_components
+--ignore-directory=is:tmp
+--ignore-directory=is:dist

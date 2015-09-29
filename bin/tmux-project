@@ -1,14 +1,30 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-    export SESSION=$(basename $PWD)
+    SESSION=$(basename $PWD)
 else
-    export SESSION=$1
+    SESSION=$1
 fi
 
-SESSION=${SESSION//./}
+export SESSION=${SESSION//./}
 
 # set window title
 echo -ne "\033]0;${SESSION}\007"
 
-tmux new-session -s $SESSION \; source-file ~/.common-public/sh/.tmux-project.tmux
+if [ -d ".virtualenv" ]; then
+  export VIRTUAL_ENV="$(readlink -f .)/.virtualenv"
+  # tmux set-environment -t $SESSION VIRTUAL_ENV $VIRTUAL_ENV
+fi
+
+# tmux set-option -t $SESSION -a update-environment ' VIRTUAL_ENV PATH'
+# tmux set-environment -t $SESSION PATH $PATH
+# tmux set-environment -t $SESSION PATH "$VIRTUAL_ENV/.bin:$PATH"
+# export VIRTUAL_ENV PATH
+
+tmux new-session -s $SESSION -d
+tmux attach-session -t $SESSION \; source-file ~/.common-public/sh/.tmux-project.tmux
+
+# \; \
+#   setenv VIRTUAL_ENV $VIRTUAL_ENV \; \
+#   setenv PATH "$VIRTUAL_ENV/bin:$PATH" \; \
+#   source-file 

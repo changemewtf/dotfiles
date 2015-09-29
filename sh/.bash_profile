@@ -51,6 +51,11 @@ PATH+=':/sbin'
 # other stuff
 [ -d "$GOPATH/bin" ] && PATH+=":$GOPATH/bin"
 
+# tmux opening in python virtualenv
+if [ -n "$VIRTUAL_ENV" ]; then
+  PATH=$VIRTUAL_ENV/bin:$PATH
+fi
+
 # Now that the PATH has been set, we can source .bashrc (certain things in
 # .bashrc may rely on the path, particularly platform-specific stuff where we
 # will want to use the GNU version of basic utils like ls, dircolors, etc.
@@ -76,4 +81,4 @@ RUBYLIB='lib'
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH
+export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV

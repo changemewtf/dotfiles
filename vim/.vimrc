@@ -2,13 +2,19 @@
 " Max Cantor's .vimrc File
 " "zo" to open folds, "zc" to close, "zn" to disable.
 
+" {{{ Clear all autocommands
+
+" TODO: It might be more honest to put this in my ,v auto-source-vimrc binding
+au!
+
+" }}}
+
 " {{{ Plugins and Settings
 
 " Vundle is used to handle plugins.
 " https://github.com/gmarik/Vundle.vim
 
 " {{{ VUNDLE SETUP
-
 
 set nocompatible
 filetype off
@@ -30,14 +36,6 @@ endif
 
 " }}}
 
-" {{{ coffeescript
-"     ============
-
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'mtscout6/vim-cjsx'
-
-" }}}
-
 " {{{ vim-scala
 "     =========
 
@@ -45,10 +43,20 @@ Plugin 'derekwyatt/vim-scala'
 
 " }}}
 
-" {{{ ember
-"     =====
+" {{{ ack.vim
+"     =======
+
+Plugin 'mileszs/ack.vim'
+
+" }}}
+
+" {{{ JS development
+"     ==============
 
 Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'mtscout6/vim-cjsx'
+Plugin 'digitaltoad/vim-jade'
 
 " }}}
 
@@ -63,6 +71,13 @@ Plugin 'joker1007/vim-ruby-heredoc-syntax'
 "     ===============
 
 Plugin 'AndrewRadev/writable_search.vim'
+
+" }}}
+
+" {{{ editorconfig-vim
+"     ================
+
+Plugin 'editorconfig/editorconfig-vim'
 
 " }}}
 
@@ -147,7 +162,7 @@ Plugin 'scrooloose/nerdtree'
 " OPTIONS:
 
 " Get rid of objects in C projects
-let NERDTreeIgnore=['\~$', '.o$[[file]]']
+let NERDTreeIgnore=['\~$', '.o$', 'bower_components', 'node_modules', '__pycache__']
 
 " }}}
 
@@ -225,6 +240,7 @@ set complete-=i
 " Formatting
 set nowrap
 set tabstop=2 shiftwidth=2 softtabstop=2
+set foldlevelstart=99
 
 " Status line
 set statusline=%!MyStatusLine()
@@ -238,10 +254,6 @@ set iskeyword+=-
 " }}}
 
 " {{{ Autocommands
-
-" Clear all autocommands
-" TODO: It might be more honest to put this in my ,v auto-source-vimrc binding
-au!
 
 " Make the modification indicator [+] white on red background
 au ColorScheme * hi User1 gui=bold term=bold cterm=bold guifg=white guibg=red ctermfg=white ctermbg=red
@@ -267,12 +279,10 @@ au FileType mustache,markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javas
 
 " Tabs Only
 au FileType c,h setl foldmethod=syntax noexpandtab nolist
-au FileType gitconfig,apache setl noexpandtab nolist
+au FileType gitconfig,apache,sql setl noexpandtab nolist
 
 " Folding
 au FileType html,htmldjango,css,sass,javascript,coffee,python,ruby,eruby setl foldmethod=indent foldenable
-" Auto-open all folds
-" au BufRead * normal zR
 
 " Tabstop/Shiftwidth
 au FileType mustache,ruby,eruby,javascript,coffee,sass,scss setl softtabstop=2 shiftwidth=2 tabstop=2
@@ -841,4 +851,3 @@ set secure
 
 " copy current filename to system clipboard
 " let @+ = expand("%")
-
