@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+source ~/.common-public/sh/bash_git_prompt
+source ~/.common-public/sh/tmux_git_prompt
+
+_update_git_variables
+tmux_git_prompt

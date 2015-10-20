@@ -19,3 +19,6 @@ bower_components
 __pycache__/
 .virtualenv/
 *.egg-info/
+
+# Ruby
+.yardoc/

@@ -1,38 +1,78 @@
 #!/bin/bash
 
+function _update_git_variables {
+    _update_git_dir &> /dev/null
+    if [ "$?" -eq 0 ]; then
+      _update_git_head
+      _update_git_detached
+      _update_git_branch
+      _update_git_changes
+    fi
+}
+
+function _update_git_dir {
+    _git_dir="$(git rev-parse --git-dir)"
+}
+
+function _update_git_head {
+    read _git_raw_head <"$_git_dir/HEAD"
+    _git_head=${_git_raw_head#ref: }
+}
+
+function _update_git_detached {
+    if [ "$_git_head" = "$_git_raw_head" ]; then
+      _git_detached=$(git rev-parse --short HEAD)
+    else
+      _get_detached=
+    fi
+}
+
+function _update_git_branch {
+    if [ -n "$_git_detached" ]; then
+        _git_branch=$(git describe --contains --all HEAD)
+    else
+        _git_branch=${_git_head##refs/heads/}
+    fi
+}
+
+function _update_git_changes {
+    _git_num_staged=$(git diff --cached --numstat | wc -l | tr -d ' ')
+    _git_num_unstaged=$(git diff --numstat | wc -l | tr -d ' ')
+    _git_num_untracked=$(git ls-files --others --exclude-standard | wc -l | tr -d ' ')
+    _git_staged_color=$BG_DARK_GRAY$(git config --get-color color.status.added green)
+    _git_unstaged_color=$BG_DARK_GRAY$(git config --get-color color.status.changed red)
+    _git_untracked_color=$BG_DARK_GRAY$(git config --get-color color.status.untracked red)
+
+}
+
+# shamelessly ganked from official git repo's __git_ps1
 function prompt_git_activity {
-    g="$1"
-
-    # shamelessly gank from official git repo's __git_ps1
-
-    if [ -d "$g/rebase-merge" ]; then
-        #read head_name 2>/dev/null <"$g/rebase-merge/head-name"
-        read step 2>/dev/null <"$g/rebase-merge/msgnum"
-        read total 2>/dev/null <"$g/rebase-merge/end"
-        if [ -f "$g/rebase-merge/interactive" ]; then
+    if [ -d "$_git_dir/rebase-merge" ]; then
+        read step 2>/dev/null <"$_git_dir/rebase-merge/msgnum"
+        read total 2>/dev/null <"$_git_dir/rebase-merge/end"
+        if [ -f "$_git_dir/rebase-merge/interactive" ]; then
             act_message="REBASE-i"
         else
             act_message="REBASE-m"
         fi
     else
-        if [ -d "$g/rebase-apply" ]; then
-            read step 2>/dev/null <"$g/rebase-apply/next"
-            read total 2>/dev/null <"$g/rebase-apply/last"
-            if [ -f "$g/rebase-apply/rebasing" ]; then
-                #read head_name 2>/dev/null <"$g/rebase-apply/head-name"
+        if [ -d "$_git_dir/rebase-apply" ]; then
+            read step 2>/dev/null <"$_git_dir/rebase-apply/next"
+            read total 2>/dev/null <"$_git_dir/rebase-apply/last"
+            if [ -f "$_git_dir/rebase-apply/rebasing" ]; then
                 act_message="REBASING"
-            elif [ -f "$g/rebase-apply/applying" ]; then
+            elif [ -f "$_git_dir/rebase-apply/applying" ]; then
                 act_message="AM"
             else
                 act_message="AM/REBASE"
             fi
-        elif [ -f "$g/MERGE_HEAD" ]; then
+        elif [ -f "$_git_dir/MERGE_HEAD" ]; then
             act_message="MERGING"
-        elif [ -f "$g/CHERRY_PICK_HEAD" ]; then
+        elif [ -f "$_git_dir/CHERRY_PICK_HEAD" ]; then
             act_message="CHERRY-PICKING"
-        elif [ -f "$g/REVERT_HEAD" ]; then
+        elif [ -f "$_git_dir/REVERT_HEAD" ]; then
             act_message="REVERTING"
-        elif [ -f "$g/BISECT_LOG" ]; then
+        elif [ -f "$_git_dir/BISECT_LOG" ]; then
             act_message="BISECTING"
         fi
     fi
@@ -45,39 +85,18 @@ function prompt_git_activity {
 }
 
 function prompt_git_branch {
-    g="$1"
-
-    read head <"$g/HEAD"
-    branch=${head#ref: }
-
-    if [ "$head" = "$branch" ]; then
-        # detached
-        branch=$(git describe --contains --all HEAD)
-        detached=$(git rev-parse --short HEAD)
-    else
-        branch=${branch##refs/heads/}
-    fi
-
-    echo -ne "\x01${GIT_BRANCH_COLOR}\x02${branch}\x01${RESET}\x02"
-    [ -n "$detached" ] && echo -ne "|\x01${GIT_DETACHED_COLOR}\x020${detached}\x01${RESET}\x02"
+    echo -ne "\x01${GIT_BRANCH_COLOR}\x02${_git_branch}\x01${RESET}\x02"
+    [ -n "$_git_detached" ] && echo -ne "|\x01${GIT_DETACHED_COLOR}\x020${_git_detached}\x01${RESET}\x02"
 }
 
 function prompt_git_changes {
     mode='symbols' # count, symbols
 
-    num_staged=$(git diff --cached --numstat | wc -l | tr -d ' ')
-    num_unstaged=$(git diff --numstat | wc -l | tr -d ' ')
-    num_untracked=$(git ls-files --others --exclude-standard | wc -l | tr -d ' ')
-
-    STAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.added green)
-    UNSTAGED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.changed red)
-    UNTRACKED_COLOR=$BG_DARK_GRAY$(git config --get-color color.status.untracked red)
-
     case "$mode" in
         count)
-            staged=$num_staged
-            unstaged=$num_unstaged
-            untracked=$num_untracked
+            staged=$_git_num_staged
+            unstaged=$_git_num_unstaged
+            untracked=$_git_num_untracked
             ;;
         symbols)
             staged="+"
@@ -95,20 +114,17 @@ function prompt_git_changes {
     delimiter='|'
     count=0
 
-    [ "$num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${STAGED_COLOR}\x02${staged}\x01${RESET}\x02"
-    [ "$num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
-    [ "$num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNSTAGED_COLOR}\x02${unstaged}\x01${RESET}\x02"
-    [ "$num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
-    [ "$num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${UNTRACKED_COLOR}\x02${untracked}\x01${RESET}\x02"
+    [ "$_git_num_staged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${_git_staged_color}\x02${staged}\x01${RESET}\x02"
+    [ "$_git_num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$_git_num_unstaged" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${_git_unstaged_color}\x02${unstaged}\x01${RESET}\x02"
+    [ "$_git_num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -ne "$delimiter"
+    [ "$_git_num_untracked" -gt "0" ] && (( count+=1 )) && echo -ne "\x01${_git_untracked_color}\x02${untracked}\x01${RESET}\x02"
 }
 
 function prompt_git {
-    # ask git for the git directory since we might be in a subdir
-    g=$(git rev-parse --git-dir)
-
-    branch=$(prompt_git_branch "$g")
+    branch=$(prompt_git_branch)
     changes=$(prompt_git_changes)
-    activity=$(prompt_git_activity "$g")
+    activity=$(prompt_git_activity)
 
     echo -ne "("
     echo -ne "$branch"

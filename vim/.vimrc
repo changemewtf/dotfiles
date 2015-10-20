@@ -240,7 +240,7 @@ set complete-=i
 " Formatting
 set nowrap
 set tabstop=2 shiftwidth=2 softtabstop=2
-set foldlevelstart=99
+set foldlevelstart=2
 
 " Status line
 set statusline=%!MyStatusLine()
@@ -835,6 +835,17 @@ function! SmartPaste()
 endfunction
 
 " }}}
+
+function! ExtendRight()
+    let l:start=winnr()
+    exe "normal \<c-w>l"
+    let l:shrink=bufnr('%')
+    close
+    exe "normal " . l:start . "\<c-w>w"
+    exe "normal \<c-w>k"
+    vsplit
+    exe "b " . l:shrink
+endfunction
 
 " }}}
 

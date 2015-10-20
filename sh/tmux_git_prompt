@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+_default_fg="colour246"
+
+_tmux_prompt_git_changes() {
+    staged="+"
+    unstaged="!"
+    untracked="?"
+
+    delimiter='|'
+    count=0
+
+    [ "$_git_num_staged" -gt "0" ] && (( count+=1 )) && echo -n "#[fg=colour82]${staged}#[fg=$_default_fg]"
+    [ "$_git_num_unstaged" -gt "0" ] && [ "$count" -gt "0" ] && echo -n "$delimiter"
+    [ "$_git_num_unstaged" -gt "0" ] && (( count+=1 )) && echo -n "#[fg=colour226]${unstaged}#[fg=$_default_fg]"
+    [ "$_git_num_untracked" -gt "0" ] && [ "$count" -gt "0" ] && echo -n "$delimiter"
+    [ "$_git_num_untracked" -gt "0" ] && (( count+=1 )) && echo -n "#[fg=colour196]${untracked}#[fg=$_default_fg]"
+}
+
+_tmux_prompt_git_branch() {
+    echo -n "("
+    echo -n "#[fg=colour76]$_git_branch"
+    echo -n "#[fg=$_default_fg]) "
+}
+
+tmux_git_prompt() {
+    changes=$(_tmux_prompt_git_changes)
+
+    echo -n "#[bg=colour236,fg=$_default_fg]"
+    echo -n " ["
+    echo -n "#[fg=colour231]#S#[fg=$_default_fg]]"
+    echo -n " "
+    if [ -n "$_git_dir" ]; then
+      echo -n "$(_tmux_prompt_git_branch)"
+      [ -n "$changes" ] && echo -n "[$changes] "
+    fi
+    echo -n "#[default] "
+}
