@@ -28,7 +28,7 @@ tmux_git_prompt() {
 
     echo -n "#[bg=colour236,fg=$_default_fg]"
     echo -n " ["
-    echo -n "#[fg=colour231]#S#[fg=$_default_fg]]"
+    echo -n "#[fg=colour231]${SESSION}#[fg=$_default_fg]]"
     echo -n " "
     if [ -n "$_git_dir" ]; then
       echo -n "$(_tmux_prompt_git_branch)"
