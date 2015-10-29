@@ -50,6 +50,13 @@ Plugin 'mileszs/ack.vim'
 
 " }}}
 
+" {{{ vim-elixir
+"     ==========
+
+Plugin 'elixir-lang/vim-elixir'
+
+" }}}
+
 " {{{ JS development
 "     ==============
 
