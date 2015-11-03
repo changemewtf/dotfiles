@@ -1,8 +1,8 @@
 # vim: ft=tmux
 
 unbind-key q
-# sleep to wait for vim to finish closing
-bind-key q send-keys -t lib ":call MySessionSave()" C-m \; run-shell "sleep 0.1" \; kill-session
+# sleep to wait for vim and servers to finish closing
+bind-key q if-shell "tmux list-windows | cut -d' ' -f2 | grep srv" "send-keys -t srv C-c" \; send-keys -t lib ":call MySessionSave()" C-m \; run-shell "sleep 0.1" \; kill-session
 
 set-window-option -g automatic-rename off
 
