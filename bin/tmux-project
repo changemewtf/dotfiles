@@ -13,18 +13,9 @@ echo -ne "\033]0;${SESSION}\007"
 
 if [ -d ".virtualenv" ]; then
   export VIRTUAL_ENV="$(readlink -f .)/.virtualenv"
-  # tmux set-environment -t $SESSION VIRTUAL_ENV $VIRTUAL_ENV
 fi
 
-# tmux set-option -t $SESSION -a update-environment ' VIRTUAL_ENV PATH'
-# tmux set-environment -t $SESSION PATH $PATH
-# tmux set-environment -t $SESSION PATH "$VIRTUAL_ENV/.bin:$PATH"
-# export VIRTUAL_ENV PATH
-
-tmux new-session -s $SESSION -d
+PROGRAMMING_SUCKS=$PWD
+(cd && env -u PWD -u SESSION -u OLDPWD tmux new-session -s $SESSION -d -c $PROGRAMMING_SUCKS)
+export PROGRAMMING_SUCKS
 tmux attach-session -t $SESSION \; source-file ~/.common-public/sh/.tmux-project.tmux
-
-# \; \
-#   setenv VIRTUAL_ENV $VIRTUAL_ENV \; \
-#   setenv PATH "$VIRTUAL_ENV/bin:$PATH" \; \
-#   source-file 

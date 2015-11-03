@@ -57,6 +57,13 @@ Plugin 'elixir-lang/vim-elixir'
 
 " }}}
 
+" {{{ vim-tmux
+"     ========
+
+Plugin 'tmux-plugins/vim-tmux'
+
+" }}}
+
 " {{{ JS development
 "     ==============
 
@@ -470,15 +477,19 @@ inoremap <silent> <C-_>3 <ESC>:call RSTHeader("^")<CR>o
 " Swap tab/space mode
 nnoremap ,<TAB> :set et! list!<CR>
 
-" Save custom session file
-command! Q mksession! .session.vim | qall!
-
 " Quick Ruby execute wrapper
 nnoremap \rex oif __FILE__ == $0end<ESC>O
 
 " }}}
 
 " Custom Functions {{{
+
+" MySessionSave() {{{
+function! MySessionSave()
+    tabdo NERDTreeClose
+    mksession! .session.vim
+    qall!
+endfunction
 
 " MyStatusLine() {{{
 

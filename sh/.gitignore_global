@@ -1,6 +1,7 @@
 # Shared
 *.db
 tags
+.session.vim
 
 # C
 *.o
