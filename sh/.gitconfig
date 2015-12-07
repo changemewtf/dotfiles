@@ -50,4 +50,4 @@
 	tool = vimdiff
 
 [core]
-	excludesfile = /Users/mcantor/.gitignore_global
+	excludesfile = ~/.gitignore_global
