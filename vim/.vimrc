@@ -88,6 +88,13 @@ Plugin 'AndrewRadev/writable_search.vim'
 
 " }}}
 
+" {{{ vim-instant-markdown
+"     ====================
+
+Plugin 'suan/vim-instant-markdown'
+
+" }}}
+
 " {{{ editorconfig-vim
 "     ================
 
@@ -305,6 +312,7 @@ au FileType rst setl softtabstop=3 shiftwidth=3 tabstop=3
 " Other
 au FileType python let b:python_highlight_all=1
 au FileType diary setl wrap linebreak nolist
+au FileType markdown setl linebreak tw=80
 
 " }}}
 
