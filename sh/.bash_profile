@@ -32,11 +32,11 @@ GOPATH="$HOME/src/go"
 
 # Just override the stupid path
 PATH=$DOTFILE_DIR'/bin'
+[ -d /usr/local/bin ] && PATH+=':/usr/local/bin'
 
 # OSX stuff
 if [ "$PLATFORM" = "OSX" ]; then
   [ -d /opt/X11/bin ] && PATH+=':/opt/X11/bin'
-  [ -d /usr/local/bin ] && PATH+=':/usr/local/bin'
   hash heroku 2>/dev/null && PATH+=':/usr/local/heroku/bin'
   hash pg_config 2>/dev/null && PATH+=":$(pg_config --bindir)"
   [ -d /usr/local/opt/coreutils/libexec/gnubin ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
