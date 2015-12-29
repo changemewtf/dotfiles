@@ -2,4 +2,4 @@
 --skip-spring
 --skip-turbolinks
 --skip-test-unit
---database=postgresql
+--skip-javascript

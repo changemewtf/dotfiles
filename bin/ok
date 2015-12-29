@@ -16,3 +16,6 @@ else:
 
 if cmd:
     subprocess.call(cmd.split(' '))
+
+# customizing rails app name in current directory
+# rails new . validations_in_controller_actions
