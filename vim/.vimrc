@@ -79,6 +79,18 @@ Plugin 'digitaltoad/vim-jade'
 
 Plugin 'joker1007/vim-ruby-heredoc-syntax'
 
+let g:ruby_heredoc_syntax_filetypes = {
+    \ "haml" : {
+    \   "start" : "HAML",
+    \},
+    \ "sass" : {
+    \   "start" : "SASS",
+    \},
+    \ "yaml" : {
+    \   "start" : "YAML",
+    \},
+\}
+
 " }}}
 
 " {{{ writable_search
@@ -91,7 +103,7 @@ Plugin 'AndrewRadev/writable_search.vim'
 " {{{ vim-instant-markdown
 "     ====================
 
-Plugin 'suan/vim-instant-markdown'
+" Plugin 'suan/vim-instant-markdown'
 
 " }}}
 
@@ -168,10 +180,15 @@ Plugin 'tpope/vim-repeat'
 " vim-liquid: syntax stuff
 Plugin 'tpope/vim-liquid'
 
+" vim-markdown: some stuff for fenced language highlighting
+Plugin 'tpope/vim-markdown'
+let g:markdown_fenced_languages = ['html', 'python', 'ruby', 'yaml', 'haml', 'bash=sh']
+
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-vinegar'
+Plugin 'tpope/vim-haml'
 
 " }}}
 
@@ -193,7 +210,6 @@ let NERDTreeIgnore=['\~$', '.o$', 'bower_components', 'node_modules', '__pycache
 let g:netrw_banner=0        " disable banner
 let g:netrw_browse_split=4  " open in prior window
 let g:netrw_altv=1          " open splits to the right
-let g:netrw_winsize=-28     " make a li'l pane
 let g:netrw_liststyle=3     " tree view
 " hide gitignore'd files
 let g:netrw_list_hide=netrw_gitignore#Hide()
@@ -351,9 +367,6 @@ endif
 
 " Key Mappings {{{
 
-" Unmap annoying doc lookup
-nnoremap K <Nop>
-
 " Run shell command
 " ... and print output
 nnoremap <C-h> :.w !bash<CR>
@@ -385,6 +398,9 @@ inoremap <C-u> <ESC>:w<CR>
 
 " Create a new HTML document.
 nnoremap ,html :-1read $HOME/.vim/.skeleton.html<CR>3jwf>a
+
+" Open in Deckset.
+nnoremap ,d :silent !reattach-to-user-namespace -l open -a Deckset.app %<CR>:redraw!<CR>
 
 " Sane pasting
 command! Paste call SmartPaste()
@@ -498,6 +514,7 @@ function! MySessionSave()
     mksession! .session.vim
     qall!
 endfunction
+" }}}
 
 " MyStatusLine() {{{
 
@@ -888,3 +905,16 @@ set secure
 
 " copy current filename to system clipboard
 " let @+ = expand("%")
+
+" {{{ Just for vim talk
+au VimEnter no_plugins.vim setl window=66
+au VimEnter no_plugins.vim normal 8Gzz
+au VimEnter no_plugins.vim command! GO normal M17jzzH
+au VimEnter no_plugins.vim command! BACK normal M17kzzH
+au VimEnter no_plugins.vim command! RUN execute getline(".")
+au VimEnter no_plugins.vim unmap H
+au VimEnter no_plugins.vim unmap L
+" why dont these work :(
+" au VimEnter no_plugins.vim nnoremap ^f :GO<CR>
+" au VimEnter no_plugins.vim nnoremap ^b :BACK<CR>
+" }}}

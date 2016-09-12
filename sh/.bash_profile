@@ -56,6 +56,11 @@ if [ -n "$VIRTUAL_ENV" ]; then
   PATH=$VIRTUAL_ENV/bin:$PATH
 fi
 
+if [ -d $HOME/Library/Android/sdk ]; then
+  ANDROID_HOME=$HOME/Library/Android/sdk
+  PATH+=:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+fi
+
 # Now that the PATH has been set, we can source .bashrc (certain things in
 # .bashrc may rely on the path, particularly platform-specific stuff where we
 # will want to use the GNU version of basic utils like ls, dircolors, etc.
@@ -81,4 +86,4 @@ RUBYLIB='lib'
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV
+export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV ANDROID_HOME
