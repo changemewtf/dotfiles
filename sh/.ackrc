@@ -2,4 +2,5 @@
 --ignore-directory=is:bower_components
 --ignore-directory=is:tmp
 --ignore-directory=is:dist
+
 --ignore-file=is:tags

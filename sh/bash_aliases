@@ -22,6 +22,11 @@ alias which='type -a'
 alias wget='wget --content-disposition'
 alias loc="find . -type f -iname \"*.rb\" -exec cat {} \; | sed '/^\s*#/d;/^\s*$/d' | wc -l"
 alias rbdoc="cd ~/my-ruby/src/ruby-2.1.2 && yard server -m core .yardoc-core stdlib-2.1.2 .yardoc-stdlib"
+
+# http://superuser.com/a/560941 - default tmux rc
+# http://superuser.com/a/538719 - tmux shell semicolon escapes
+function default_tmux_rc { tmux -L unconfigured -f /dev/null start-server \; list-keys \; show-options -s \; show-options -g \; show-options -gw; }
+function gittotal { git log --author="Max Cantor" --pretty=tformat: --numstat | awk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add, subs, loc }' -; }
 function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } # to be piped after a diff
 function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
 function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
