@@ -82,9 +82,15 @@ fi
 if [ $(uname -s) = "Linux" ]; then
   sudo apt-get install build-essential
 
+  # nginx
+  sudo apt-get install nginx
+  sudo groupadd nginx-admin
+  sudo usermod -aG nginx-admin mcantor
+  sudo chown -R root:nginx-admin /etc/nginx
+  sudo chmod -R g+w /etc/nginx
+
   # ruby
   sudo apt-get install libssl-dev libreadline-dev zlib1g-dev
-
   echo "Setting up rbenv..."
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   echo "Setting up ruby-build..."
