@@ -233,6 +233,7 @@ filetype plugin indent on
 
 " Modelines
 set modelines=2
+set modeline
 
 " For clever completion with the :find command
 set path+=**
