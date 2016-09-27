@@ -2,6 +2,7 @@
 *.db
 tags
 .session.vim
+.ackrc
 
 # C
 *.o
