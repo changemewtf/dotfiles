@@ -50,9 +50,9 @@ else
 fi
 
 # OS X stuff
-# homebrew must come first so we have ln from coreutils, which
-# is expected by the setup_common_symlinks script
 if [ $(uname -s) = "Darwin" ]; then
+  # homebrew must come first so we have ln from coreutils, which
+  # is expected by the setup_common_symlinks script
   if hash brew 2>/dev/null; then
     echo "Installing Homebrew..."
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -78,6 +78,31 @@ if [ $(uname -s) = "Darwin" ]; then
   fi
 fi
 
+# Ubuntu stuff
+if [ $(uname -s) = "Linux" ]; then
+  sudo apt-get install build-essential
+
+  # ruby
+  sudo apt-get install libssl-dev libreadline-dev zlib1g-dev
+
+  echo "Setting up rbenv..."
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  echo "Setting up ruby-build..."
+  git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+
+  # tmux
+  sudo apt-get install automake pkg-config libevent-dev libncurses5-dev
+  mdkir -p src
+  (cd src && \
+    git clone https://github.com/tmux/tmux.git && \
+    cd tmux && \
+    git co 2.2 && \
+    sh autogen.sh && \
+    ./configure && \
+    make && \
+    sudo mv tmux /usr/local/bin)
+fi
+
 # setup dotfile symlinks
 echo "Sourcing bash profile"
 source $DOTFILE_DIR/sh/.bash_profile
@@ -93,4 +118,3 @@ if ! [ -d ~/.vim/bundle/Vundle.vim ]; then
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     vim +PluginInstall +qall
 fi
-
