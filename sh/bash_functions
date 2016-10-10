@@ -1,1 +1,51 @@
 # vim:ft=sh
+
+# These are basically just aliases, but complex enough to warrant a function.
+
+# http://superuser.com/a/560941 - default tmux rc
+# http://superuser.com/a/538719 - tmux shell semicolon escapes
+function default_tmux_rc { tmux -L unconfigured -f /dev/null start-server \; list-keys \; show-options -s \; show-options -g \; show-options -gw; }
+function gittotal { git log --author="Max Cantor" --pretty=tformat: --numstat | awk '{ add += $1; subs += $2; loc += $1 - $2 } END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add, subs, loc }' -; }
+function diffcount { egrep -v "^[-+]{3}" | egrep -o "^[-+]" | sort | uniq -c; } # to be piped after a diff
+function netlines { awk "/-/ { del=\$1 } /+/ { add=\$1 } END { print add - del }"; } # to be piped after diffcount()
+function zipit { zip -r $1 $2 --exclude \*\.svn/\*; }
+function :he { vim -c ":he $1" -c :only; }
+function find_symlinks { DIR=$1; shift; find $DIR -type l -maxdepth 1 "$@"; }
+function find_broken_symlinks { DIR=$1; shift; find -L $DIR -type l -maxdepth 1 "$@"; }
+function copy_ssh_pubkey { REMOTE=$1; cat ~/.ssh/id_rsa.pub | ssh $REMOTE 'umask 077; cat >> .ssh/authorized_keys'; }
+
+TIMETRACK="$HOME/timetrack"
+function chin { echo "$(date +%s) $@" >> $TIMETRACK && tail -n5 $TIMETRACK; }
+#BEGINC="\[\033[1;34m\]"
+#ENDC="\[\033[0m\]"
+BEGINC="\033[1;34m"
+ENDC="\033[0m"
+function peek { awk -v BEGINC="$BEGINC" -v ENDC="$ENDC" '{ cmd = "date -d@"$1" +%r"; cmd | getline var; $1=""; print BEGINC var ENDC":"$0; }' $TIMETRACK; }
+
+# Android Development 10/01/2016
+
+# Fundamentals: https://developer.android.com/guide/components/fundamentals.html
+# Widgets: https://developer.android.com/guide/topics/appwidgets/index.html
+
+ANDROID_PACKAGE_DOMAIN="com.maxcantor"
+ANDROID_TARGET="android-2"
+
+# http://incise.org/android-development-on-the-command-line.html
+function create_android_project {
+  android create project \
+    `# android list targets to show target IDs (android-23 is 6.0)` \
+    --target android-23 \
+    `# Project name 'Perfect Picture Widget' contains invalid characters.` \
+    `# Allowed characters are: a-z A-Z 0-9 _` \
+    --name "$1" \
+    `# naming conventions: http://stackoverflow.com/questions/6273892/android-package-name-convention` \
+    --package "$ANDROID_PACKAGE_DOMAIN.$2" \
+    `# https://developer.android.com/reference/android/app/Activity.html` \
+    --activity "$3" \
+    --path "$4" \
+  ;
+}
+
+function build_android_debug {
+  ant debug install && adb shell "am start -n $ANDROID_PACKAGE_DOMAIN.$1/.$2";
+}

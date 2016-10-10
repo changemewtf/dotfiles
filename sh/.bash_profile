@@ -30,8 +30,13 @@ GOPATH="$HOME/src/go"
 # Load local private API keys
 [[ -f ~/.local/sh/api_keys ]] && . ~/.local/sh/api_keys
 
-# Just override the stupid path
+# Just override the stupid path and start in my dotfiles bin
 PATH=$DOTFILE_DIR'/bin'
+
+# Nexus project
+[ -d $HOME/src/projects/nexus ] && PATH+=":$HOME/src/projects/nexus/exe"
+
+# Homebrew et al.
 [ -d /usr/local/bin ] && PATH+=':/usr/local/bin'
 
 # OSX stuff
@@ -40,13 +45,15 @@ if [ "$PLATFORM" = "OSX" ]; then
   hash heroku 2>/dev/null && PATH+=':/usr/local/heroku/bin'
   hash pg_config 2>/dev/null && PATH+=":$(pg_config --bindir)"
   [ -d /usr/local/opt/coreutils/libexec/gnubin ] && PATH+=':/usr/local/opt/coreutils/libexec/gnubin'
+
+  if [ -d $HOME/Library/Android/sdk ]; then
+    ANDROID_HOME=$HOME/Library/Android/sdk
+    PATH+=:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  fi
 fi
 
 # system stuff
-PATH+=':/usr/bin'
-PATH+=':/bin'
-PATH+=':/usr/sbin'
-PATH+=':/sbin'
+PATH+=':/usr/bin:/bin:/usr/sbin:/sbin'
 
 # other stuff
 [ -d "$GOPATH/bin" ] && PATH+=":$GOPATH/bin"
@@ -54,11 +61,6 @@ PATH+=':/sbin'
 # tmux opening in python virtualenv
 if [ -n "$VIRTUAL_ENV" ]; then
   PATH=$VIRTUAL_ENV/bin:$PATH
-fi
-
-if [ -d $HOME/Library/Android/sdk ]; then
-  ANDROID_HOME=$HOME/Library/Android/sdk
-  PATH+=:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 fi
 
 # Now that the PATH has been set, we can source .bashrc (certain things in
