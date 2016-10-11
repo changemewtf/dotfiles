@@ -1,20 +1,7 @@
 #!/bin/bash
 
-# EXAMPLES
-# ok add alias be bundle exec
-# ok list alias
-
-SUBCMD="$1"
+NAME="$1"
 shift
-CMD="$1"
-shift
-
-# un-pluralize
-CMD=${CMD%es}
-
-case "$CMD" in
-  alias,function)
-esac
 ALIAS="$@"
 
 DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
@@ -31,4 +18,3 @@ add_function)
 esac
 
 PATH="$DOTFILE_DIR/sh/$FILE"
-
