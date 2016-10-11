@@ -51,9 +51,11 @@ fi
 
 # OS X stuff
 if [ $(uname -s) = "Darwin" ]; then
+  xcode-select --install
+
   # homebrew must come first so we have ln from coreutils, which
   # is expected by the setup_common_symlinks script
-  if hash brew 2>/dev/null; then
+  if ! hash brew 2>/dev/null; then
     echo "Installing Homebrew..."
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     hash -r
@@ -63,6 +65,14 @@ if [ $(uname -s) = "Darwin" ]; then
         exit 1
     fi
   fi
+
+  # other stuff to do:
+  # Install Charles Web Proxy, Sublime Text 2, Deckset
+  # Install Anonymous Pro and Chevy Ray's Pixel Fonts
+  # Install Moom, Alfred, iTerm 2, DragonDrop
+  # Synchronize settings for Moom, Alfred, iTerm 2
+  # Install Evernote, Photoshop
+  # Install nice brushes for Photoshop
 
   brew install $(tr '\n' ' ' <$DOTFILE_DIR/sh/homebrew_packages)
   brew install findutils --with-default-names

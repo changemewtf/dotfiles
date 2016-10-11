@@ -24,4 +24,4 @@ source $DOTFILE_DIR/sh/bash_functions
 # setup completion if available
 [ -f /etc/bash_completion ] && source /etc/bash_completion
 
-[ "$PLATFORM" = "OSX" ] && source $DOTFILE_DIR/sh/osx_setup
+[ "$PLATFORM" = "OSX" ] && source $DOTFILE_DIR/sh/.bashrc.osx
