@@ -85,7 +85,13 @@ hash pyenv 2>/dev/null && eval "$(pyenv init -)"
 # For convenient editing of ruby projects and gems
 RUBYLIB='lib'
 
+# https://iterm2.com/documentation-shell-integration.html
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
 export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV ANDROID_HOME
+
+# API Keys
+export SENDGRID_API_KEY="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"

@@ -26,4 +26,4 @@ __pycache__/
 .yardoc/
 
 # Rails
-db/*.sqlite3
+*.sqlite3

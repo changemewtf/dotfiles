@@ -50,6 +50,13 @@ Plugin 'mileszs/ack.vim'
 
 " }}}
 
+" {{{ vim-swift
+"     ==========
+
+Plugin 'toyamarinyon/vim-swift'
+
+" }}}
+
 " {{{ vim-elixir
 "     ==========
 
@@ -89,6 +96,9 @@ let g:ruby_heredoc_syntax_filetypes = {
     \ "yaml" : {
     \   "start" : "YAML",
     \},
+    \ "eruby" : {
+    \   "start" : "ERB",
+    \}
 \}
 
 " }}}
@@ -313,7 +323,7 @@ au BufNewFile,BufRead tasksheet_* set ft=tasksheet | call UpdateTaskDisplay()
 au BufWritePost * call UpdateTaskDisplay()
 
 " Spaces Only
-au FileType mustache,markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
+au FileType swift,mustache,markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
 
 " Tabs Only
 au FileType c,h setl foldmethod=syntax noexpandtab nolist
@@ -321,6 +331,7 @@ au FileType gitconfig,apache,sql setl noexpandtab nolist
 
 " Folding
 au FileType html,htmldjango,css,sass,javascript,coffee,python,ruby,eruby setl foldmethod=indent foldenable
+au FileType json setl foldmethod=indent foldenable shiftwidth=4 softtabstop=4 tabstop=4 expandtab
 
 " Tabstop/Shiftwidth
 au FileType mustache,ruby,eruby,javascript,coffee,sass,scss setl softtabstop=2 shiftwidth=2 tabstop=2
@@ -505,6 +516,10 @@ nnoremap ,<TAB> :set et! list!<CR>
 " Quick Ruby execute wrapper
 nnoremap \rex oif __FILE__ == $0end<ESC>O
 
+" Insert timestamp
+nnoremap <C-d> "=strftime("%-l:%M%p")<CR>P
+inoremap <C-d> <C-r>=strftime("%-l:%M%p")<CR>
+
 " }}}
 
 " Custom Functions {{{
@@ -575,10 +590,10 @@ function! SourceHeaderSwap()
     elseif expand('%:h') == 'mods/base/ui'
         execute ":edit content/ui/".expand('%:t:r').".html"
     elseif expand('%:e') == 'h'
-        if filereadable(expand('%:r').".c")
-            execute ":edit ".expand('%:r').".c"
-        else
+        if filereadable(expand('%:r').".cpp")
             execute ":edit ".expand('%:r').".cpp"
+        else
+            execute ":edit ".expand('%:r').".c"
         endif
     else
         edit %<.h
