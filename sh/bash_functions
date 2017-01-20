@@ -2,6 +2,15 @@
 
 # These are basically just aliases, but complex enough to warrant a function.
 
+function wdi {
+  export PS1="$ "
+  alias cdw="cd ~/Documents/WDI\ DC\ November"
+  clear
+  cd ~/Documents/WDI\ DC\ November
+  pwd
+  ls
+}
+
 # http://superuser.com/a/560941 - default tmux rc
 # http://superuser.com/a/538719 - tmux shell semicolon escapes
 function default_tmux_rc { tmux -L unconfigured -f /dev/null start-server \; list-keys \; show-options -s \; show-options -g \; show-options -gw; }

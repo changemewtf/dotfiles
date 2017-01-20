@@ -53,6 +53,9 @@ fi
 if [ $(uname -s) = "Darwin" ]; then
   xcode-select --install
 
+  # Make Finder quittable
+  defaults write com.apple.finder QuitMenuItem -bool YES
+
   # homebrew must come first so we have ln from coreutils, which
   # is expected by the setup_common_symlinks script
   if ! hash brew 2>/dev/null; then
