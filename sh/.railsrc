@@ -1,5 +1,7 @@
+--skip-action-cable
 --skip-keeps
---skip-spring
 --skip-turbolinks
 --skip-test-unit
 --skip-javascript
+--skip-action-mailer
+--database=postgresql
