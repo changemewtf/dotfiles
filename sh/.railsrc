@@ -1,0 +1,7 @@
+--skip-keeps
+--skip-spring
+--skip-javascript
+--skip-turbolinks
+--skip-test
+--skip-action-cable
+--database=postgresql
