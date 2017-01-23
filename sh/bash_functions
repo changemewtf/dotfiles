@@ -22,6 +22,14 @@ function :he { vim -c ":he $1" -c :only; }
 function find_symlinks { DIR=$1; shift; find $DIR -type l -maxdepth 1 "$@"; }
 function find_broken_symlinks { DIR=$1; shift; find -L $DIR -type l -maxdepth 1 "$@"; }
 function copy_ssh_pubkey { REMOTE=$1; cat ~/.ssh/id_rsa.pub | ssh $REMOTE 'umask 077; cat >> .ssh/authorized_keys'; }
+function capture {
+    sudo dtrace -p "$1" -qn '
+        syscall::write*:entry
+        /pid == $target && arg0 == 1/ {
+            printf("%s", copyinstr(arg1, arg2));
+        }
+    '
+}
 
 TIMETRACK="$HOME/timetrack"
 function chin { echo "$(date +%s) $@" >> $TIMETRACK && tail -n5 $TIMETRACK; }

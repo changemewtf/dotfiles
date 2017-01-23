@@ -2,6 +2,8 @@
 --skip-spring
 --skip-javascript
 --skip-turbolinks
---skip-test
 --skip-action-cable
+--skip-turbolinks
+--skip-test-unit
+--skip-action-mailer
 --database=postgresql

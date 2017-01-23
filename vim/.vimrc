@@ -27,19 +27,10 @@ Plugin 'gmarik/Vundle.vim'
 
 " <PLUGINS>
 
-" {{{ powerline: Nifty statusline
-"     ===========================
-
-if filereadable(expand("~/.local/powerline-enabled"))
-    Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-endif
-
-" }}}
-
 " {{{ vim-scala
 "     =========
 
-Plugin 'derekwyatt/vim-scala'
+" Plugin 'derekwyatt/vim-scala'
 
 " }}}
 
@@ -60,7 +51,7 @@ Plugin 'toyamarinyon/vim-swift'
 " {{{ vim-elixir
 "     ==========
 
-Plugin 'elixir-lang/vim-elixir'
+" Plugin 'elixir-lang/vim-elixir'
 
 " }}}
 
@@ -106,7 +97,7 @@ let g:ruby_heredoc_syntax_filetypes = {
 " {{{ writable_search
 "     ===============
 
-Plugin 'AndrewRadev/writable_search.vim'
+" Plugin 'AndrewRadev/writable_search.vim'
 
 " }}}
 
@@ -199,6 +190,7 @@ Plugin 'tpope/vim-git'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-vinegar'
 Plugin 'tpope/vim-haml'
+Plugin 'tpope/vim-eunuch'
 
 " }}}
 
@@ -211,6 +203,7 @@ Plugin 'scrooloose/nerdtree'
 
 " Get rid of objects in C projects
 let NERDTreeIgnore=['\~$', '.o$', 'bower_components', 'node_modules', '__pycache__']
+let NERDTreeWinSize=20
 
 " }}}
 
@@ -326,7 +319,7 @@ au BufWritePost * call UpdateTaskDisplay()
 au FileType swift,mustache,markdown,cpp,hpp,vim,sh,html,htmldjango,css,sass,scss,javascript,coffee,python,ruby,eruby setl expandtab list
 
 " Tabs Only
-au FileType c,h setl foldmethod=syntax noexpandtab nolist
+au FileType c,h,make setl foldmethod=syntax noexpandtab nolist
 au FileType gitconfig,apache,sql setl noexpandtab nolist
 
 " Folding
@@ -340,7 +333,7 @@ au FileType rst setl softtabstop=3 shiftwidth=3 tabstop=3
 " Other
 au FileType python let b:python_highlight_all=1
 au FileType diary setl wrap linebreak nolist
-au FileType markdown setl linebreak tw=80
+au FileType markdown setl linebreak
 
 " }}}
 
