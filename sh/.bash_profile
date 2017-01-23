@@ -91,4 +91,4 @@ test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shel
 # Since this file is supposedly read only once per login session, its variables
 # are exported so that child processes (including other bash sessions) will
 # have access to them.
-export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV ANDROID_HOME
+export PATH EDITOR LANG PLATFORM RUBYLIB GOPATH VIRTUAL_ENV ANDROID_HOME DOTFILE_DIR

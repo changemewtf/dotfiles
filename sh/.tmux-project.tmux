@@ -7,10 +7,11 @@ bind-key q if-shell "tmux list-windows | cut -d' ' -f2 | grep srv" "send-keys -t
 set-window-option -g automatic-rename off
 
 rename-window git
+send-keys "tree" C-m
 send-keys "git status" C-m
 
 new-window -n lib
-send-keys "if [ -e .session.vim ]; then vim -S .session.vim; else vim; fi" C-m
+send-keys "if [ -e .session.vim ]; then vim -S .session.vim; else vim -c NERDTree; fi" C-m
 
 new-window -n bash
 
@@ -25,4 +26,4 @@ new-window -n srv -t 9
 
 if-shell 'cd $PROGRAMMING_SUCKS && test -e Procfile' "select-window -t srv ; send-keys 'foreman start' C-m"
 
-select-window -t git
+select-window -t lib

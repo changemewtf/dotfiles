@@ -1,0 +1,36 @@
+#!/bin/bash
+
+PROJECT_FOLDER=$HOME/src/projects
+
+pname=$1
+
+cd $PROJECT_FOLDER
+
+if [ -d $pname ]; then
+  echo "Folder ${pname} already exists."
+  exit 1
+fi
+
+if [[ -z "$DOTFILE_DIR" ]]; then
+  echo "Couldn't find dotfile directory."
+  exit 1
+fi
+
+mkdir -p ${pname}/lib/${pname}
+
+cd $pname
+
+touch lib/${pname}.rb
+
+cp ${DOTFILE_DIR}/bin/Gemfile.default Gemfile
+bundle config local.grimoire ${PROJECT_FOLDER}/grimoire
+bundle
+
+bundle exec rspec --init
+touch spec/${pname}_spec.rb
+
+git init .
+git add -A
+git commit -m "First commit."
+
+tmux-project
