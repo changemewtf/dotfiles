@@ -27,3 +27,6 @@ __pycache__/
 
 # Rails
 *.sqlite3
+
+# Qt5
+*.qmlc

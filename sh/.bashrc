@@ -4,6 +4,7 @@ DOTFILE_DIR="$HOME/$(<$HOME/.dotfile_directory)"
 HISTCONTROL='ignorespace:erasedups' # tweak what gets added to history
 shopt -s histappend # multiple terminals don't clobber each others' history
 shopt -s checkwinsize # update LINES and COLUMNS
+shopt -s no_empty_cmd_completion
 
 # if a 256color terminfo is available for our terminal, switch to it
 if [[ $TERM != *-256color ]]; then

@@ -34,6 +34,13 @@ Plugin 'gmarik/Vundle.vim'
 
 " }}}
 
+" {{{ vim-qml
+"     =========
+
+Plugin 'peterhoeg/vim-qml'
+
+" }}}
+
 " {{{ ack.vim
 "     =======
 
